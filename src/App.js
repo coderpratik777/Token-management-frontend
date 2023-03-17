@@ -1,4 +1,6 @@
 import "./App.css";
+
+
 import Home from "./components/Home";
 import Navbar from "./components/Navbar";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -10,10 +12,11 @@ import CustomerPanel from "./components/CustomerPanel";
 import CounterExecPanel from "./components/CounterExecPanel";
 import AllCountersPanel from "./components/AllCountersPanel";
 import Counter from "./components/Counter";
+import { Fragment } from "react";
 
 function App() {
   return (
-    <>
+    <Fragment>
       <Router>
         <Navbar />
         <Routes>
@@ -28,9 +31,10 @@ function App() {
           <Route path="/customer-panel" element={<CustomerPanel />} />
           <Route path="/all-counter-panel" element={<AllCountersPanel />} />
           <Route path="/counter" element={<Counter />} />
+          
         </Routes>
       </Router>
-    </>
+    </Fragment>
   );
 }
 
