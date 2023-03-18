@@ -91,7 +91,7 @@ const CustomerPanel = () => {
           Pick Any service to generate Token
         </h1>
       </div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="flex flex-col h-[30rem] justify-between">
         <div className="w-full flex justify-around space-x-2 p-5">
           {services.map((service) => (
             <div
@@ -129,7 +129,7 @@ const CustomerPanel = () => {
             </div>
           ))}
         </div>
-        <div className="flex justify-center w-full py-14">
+        <div className="flex justify-center w-full pb-8">
           <button
             className="text-xl bg-indigo-500 hover:bg-indigo-600 text-white w-max py-2 px-6 rounded-md"
             type="submit"
