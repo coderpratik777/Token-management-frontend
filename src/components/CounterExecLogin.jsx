@@ -1,8 +1,13 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const CounterExecLogin = () => {
   const [userData, setUserData] = useState({ username: "", password: "" });
+  const [status,setStatus] = useState();
+
+  const navigate = useNavigate();
+
 
   function submit() {
 
@@ -16,13 +21,16 @@ const CounterExecLogin = () => {
       })
       .then(response => {
         console.log(response.data);
-        //   setUserData(response.data); 
+        setStatus(response.data.st);
+
+        console.log(status);
       });
 
+      if(status==='login'){
+        navigate('/counter-executive')
+      }
 
   }
-
-
 
 
 
