@@ -1,5 +1,8 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const services = [
   { name: "Cash Service", value: "CashService" },
@@ -27,8 +30,8 @@ const serviceDetails = {
     { name: "Account Modification", value: "AccountModification" },
   ],
   ChequeService: [
-    { name: "CheckDeposit", value: "CheckDeposit" },
-    { name: "CheckEncashment", value: "CheckEncashment" },
+    { name: "ChequeDeposit", value: "ChequeDeposit" },
+    { name: "ChequeEncashment", value: "ChequeEncashment" },
   ],
   OtherService: [
     { name: "Financial Counselling", value: "FinancialCounselling" },
@@ -38,28 +41,48 @@ const serviceDetails = {
 };
 
 const CustomerPanel = () => {
+  const navigate = useNavigate();
+
   const [selectedService, setSelectedService] = useState("");
   const [selectedOptions, setSelectedOptions] = useState([]);
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (selectedOptions.length === 0) {
       console.log("Select at least 1 service");
     } else {
-      axios
+      await axios
         .post("http://localhost:8080/addtoken", {
           service: selectedService,
           subServices: selectedOptions,
         })
         .then(function (response) {
-          console.log(response.data);
+          if (JSON.parse(localStorage.getItem("UserToken"))) {
+            localStorage.setItem(
+              "UserToken",
+              JSON.stringify(
+                JSON.parse(localStorage.getItem("UserToken")).concat(
+                  response.data
+                )
+              )
+            );
+          } else {
+            localStorage.setItem("UserToken", JSON.stringify(response.data));
+          }
+          toast.success("Token Generated", {
+            position: "top-center",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+          navigate("/all-counter-panel");
         })
         .catch(function (error) {
           console.log(error);
         });
-      console.log({
-        service: selectedService,
-        subServices: selectedOptions,
-      });
     }
   };
 
@@ -91,12 +114,15 @@ const CustomerPanel = () => {
           Pick Any service to generate Token
         </h1>
       </div>
-      <form onSubmit={handleSubmit} className="flex flex-col h-[30rem] justify-between">
-        <div className="w-full flex justify-around space-x-2 p-5">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col h-[30rem] justify-between"
+      >
+        <div className="w-full flex flex-wrap justify-around p-5">
           {services.map((service) => (
             <div
               key={service.value}
-              className="w-1/6 bg-gray-100 flex rounded flex-col shadow hover:shadow-lg h-max"
+              className="w-full md:w-5/12j lg:w-1/6 bg-gray-100 flex rounded flex-col shadow hover:shadow-lg h-max m-2"
             >
               <label className="flex items-center justify-between p-4">
                 {service.name}

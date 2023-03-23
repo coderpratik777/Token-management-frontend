@@ -1,22 +1,23 @@
 import "./App.css";
 
-
 import Home from "./components/Home";
 import Navbar from "./components/Navbar";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AdminLogin from "./components/AdminLogin";
 import CounterExecLogin from "./components/CounterExecLogin";
-import CounterPanel from "./components/AllCountersPanel";
 import AdminPanel from "./components/AdminPanel";
 import CustomerPanel from "./components/CustomerPanel";
 import CounterExecPanel from "./components/CounterExecPanel";
 import AllCountersPanel from "./components/AllCountersPanel";
 import Counter from "./components/Counter";
 import { Fragment } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
     <Fragment>
+      <ToastContainer />
       <Router>
         <Navbar />
         <Routes>
@@ -31,7 +32,6 @@ function App() {
           <Route path="/customer-panel" element={<CustomerPanel />} />
           <Route path="/all-counter-panel" element={<AllCountersPanel />} />
           <Route path="/counter" element={<Counter />} />
-          
         </Routes>
       </Router>
     </Fragment>

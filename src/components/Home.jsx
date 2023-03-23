@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { MdOutlineCountertops, MdGeneratingTokens } from "react-icons/md";
+import { BsArrowRightShort } from "react-icons/bs";
 
 const Home = () => {
   return (
@@ -19,33 +21,13 @@ const Home = () => {
             className="flex rounded-lg items-center bg-gray-100 p-8 space-x-4 w-1/2 hover:shadow-lg"
           >
             <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full bg-indigo-500 text-white flex-shrink-0">
-              <svg
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                className="w-5 h-5"
-                viewBox="0 0 24 24"
-              >
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-              </svg>
+              <MdGeneratingTokens className="text-xl" />
             </div>
             <h2 className="text-gray-900 text-lg title-font font-medium">
               Generate Token
             </h2>
             <div className=" text-indigo-500 inline-flex items-center">
-              <svg
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                className="w-4 h-4 ml-2"
-                viewBox="0 0 24 24"
-              >
-                <path d="M5 12h14M12 5l7 7-7 7"></path>
-              </svg>
+              <BsArrowRightShort className="text-2xl" />
             </div>
           </Link>
           <Link
@@ -53,33 +35,13 @@ const Home = () => {
             className="flex rounded-lg items-center bg-gray-100 p-8 space-x-4 w-1/2 hover:shadow-lg"
           >
             <div className="w-8 h-8 mr-3 inline-flex items-center justify-center rounded-full bg-indigo-500 text-white flex-shrink-0">
-              <svg
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                className="w-5 h-5"
-                viewBox="0 0 24 24"
-              >
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-              </svg>
+              <MdOutlineCountertops className="text-xl" />
             </div>
             <h2 className="text-gray-900 text-lg title-font font-medium">
               Counter Status
             </h2>
             <div className=" text-indigo-500 inline-flex items-center">
-              <svg
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                className="w-4 h-4 ml-2"
-                viewBox="0 0 24 24"
-              >
-                <path d="M5 12h14M12 5l7 7-7 7"></path>
-              </svg>
+              <BsArrowRightShort className="text-2xl" />
             </div>
           </Link>
         </div>
