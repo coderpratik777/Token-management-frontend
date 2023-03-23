@@ -1,7 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   return (
     <div>
       <header className="text-gray-600 body-font shadow-lg">
@@ -12,21 +16,44 @@ const Navbar = () => {
           >
             <span className="ml-3 text-xl">Bank Token</span>
           </Link>
-          <nav className="flex flex-wrap space-x-24 items-center text-base justify-center">
-            <Link to="/login/admin" className=" hover:text-gray-900">
-              Admin Login
-            </Link>
+          {!(
+            localStorage.getItem("counterid") || localStorage.getItem("adminid")
+          ) && (
+            <nav className="flex flex-wrap space-x-24 items-center text-base justify-center">
+              <Link to="/login/admin" className=" hover:text-gray-900">
+                Admin Login
+              </Link>
 
-            <Link
-              to="/login/counter-executive"
-              className=" hover:text-gray-900"
+              <Link
+                to="/login/counter-executive"
+                className=" hover:text-gray-900"
+              >
+                Counter Executive Login
+              </Link>
+            </nav>
+          )}
+          {localStorage.getItem("counterid") && (
+            <button
+              type="button"
+              onClick={() => {
+                localStorage.removeItem("counterid");
+                toast.success("Logged out.", {
+                  position: "top-center",
+                  autoClose: 2000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "light",
+                });
+                navigate("/login/counter-executive");
+              }}
+              className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0"
             >
-              Counter Executive Login
-            </Link>
-          </nav>
-          <button className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">
-            Button
-          </button>
+              Logout
+            </button>
+          )}
         </div>
       </header>
     </div>

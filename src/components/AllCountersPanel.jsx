@@ -27,7 +27,7 @@ const AllCountersPanel = () => {
   return (
     <div>
       <section className="text-gray-600 body-font w-full px-5 py-10 flex">
-        <div className="flex flex-wrap w-2/3">
+        <div className="flex flex-wrap w-2/3 h-max">
           {Object.keys(counterData).map((eachCounterNo) => {
             return (
               <Link

@@ -1,30 +1,45 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CounterExecLogin = () => {
   const [userData, setUserData] = useState({ username: "", password: "" });
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (localStorage.getItem("counterid")) {
+      navigate("/counter-executive");
+    }
+  }, []);
 
-  const submit =()=> {
+  const submit = () => {
     var jsonData = JSON.stringify(userData);
     axios
       .post("http://localhost:8080/executivelogin", jsonData, {
         headers: {
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       })
       .then((response) => {
-        if(response.data.st==="login"){
-          localStorage.setItem('counterid',JSON.stringify(response.data.cid));
-          navigate('/counter-executive')
+        if (response.data.st === "login") {
+          localStorage.setItem("counterid", JSON.stringify(response.data.cid));
+          toast.success("Welcome back!", {
+            position: "top-center",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+          navigate("/counter-executive");
         }
       });
-  }
-
-
+  };
 
   return (
     <section className="bg-gray-50">

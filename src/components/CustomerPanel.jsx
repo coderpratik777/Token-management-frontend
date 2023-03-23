@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -45,6 +45,23 @@ const CustomerPanel = () => {
 
   const [selectedService, setSelectedService] = useState("");
   const [selectedOptions, setSelectedOptions] = useState([]);
+
+  useEffect(() => {
+    if (localStorage.getItem("counterid")) {
+      toast.error("You do not have access to generate token.", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      navigate("/counter-executive");
+    }
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (selectedOptions.length === 0) {

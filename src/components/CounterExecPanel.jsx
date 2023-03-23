@@ -2,13 +2,30 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { func } from "prop-types";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CounterExecPanel = () => {
   const [counterData, setCounterData] = useState([]);
   const [serviceData, setServiceData] = useState({});
   const [serviceName, setServiceName] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (!localStorage.getItem("counterid")) {
+      toast.error("Please login as a Counter Executive First", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      navigate("/login/counter-executive");
+    }
+
     let url = `http://localhost:8080/gettokencounters?cid=${JSON.parse(
       localStorage.getItem("counterid")
     )}`;
@@ -49,6 +66,16 @@ const CounterExecPanel = () => {
         });
         setCounterData(counterData.slice(1));
       }
+      toast.success("Next customer Called.", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
       console.log("data not found");
     }
@@ -70,6 +97,16 @@ const CounterExecPanel = () => {
     localStorage.setItem("counterData", JSON.stringify(temp.slice(1)));
     console.log(JSON.parse(localStorage.getItem("counterData")));
     setCounterData(JSON.parse(localStorage.getItem("counterData")));
+    toast.success("Customer Served!", {
+      position: "top-center",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
     // setCounterData(counterData.slice(1));
   };
 
@@ -136,44 +173,52 @@ const CounterExecPanel = () => {
                     className="text-body-color hover:border-primary hover:bg-indigo-900 inline-block rounded-full border border-[blue] py-2 px-7 text-base font-medium transition hover:text-white"
                   >
                     {" "}
-                    Served
+                    Serve
                   </button>
                 </div>
                 <div className="p-8 text-center sm:p-9 md:p-7 xl:p-9">
                   <div>
-                    <table class="table-auto">
+                    <table className="table-auto">
                       <thead>
                         <tr>
-                          <th class="px-4 py-2">Id</th>
-                          <th class="px-4 py-2">Expected Time</th>
-                          <th class="px-4 py-2">Frequency Of Caling</th>
-                          <th class="px-4 py-2">Generation Of Time</th>
-                          <th class="px-4 py-2">Status</th>
+                          <th className="px-4 py-2">Id</th>
+                          <th className="px-4 py-2">Expected Time</th>
+                          <th className="px-4 py-2">Frequency Of Caling</th>
+                          <th className="px-4 py-2">Generation Of Time</th>
+                          <th className="px-4 py-2">Status</th>
                         </tr>
                       </thead>
-                      <tbody>
-                        {counterData
-                          .filter((item) => item.status === "ACTIVE")
-                          .map((filteredItem) => (
-                            <tr>
-                              <td class="border px-4 py-2">
-                                {filteredItem.id}
-                              </td>
-                              <td class="border px-4 py-2">
-                                {filteredItem.expectedTime}
-                              </td>
-                              <td class="border px-4 py-2">
-                                {filteredItem.frequencyOfCalling}
-                              </td>
-                              <td class="border px-4 py-2">
-                                {filteredItem.generationTime}
-                              </td>
-                              <td class="border px-4 py-2">
-                                {filteredItem.status}
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
+                      {counterData.length === 0 ? (
+                        <tbody>
+                          <tr>
+                            <td>NO token generated</td>
+                          </tr>
+                        </tbody>
+                      ) : (
+                        <tbody>
+                          {counterData
+                            .filter((item) => item.status === "ACTIVE")
+                            .map((filteredItem) => (
+                              <tr>
+                                <td className="border px-4 py-2">
+                                  {filteredItem.id}
+                                </td>
+                                <td className="border px-4 py-2">
+                                  {filteredItem.expectedTime}
+                                </td>
+                                <td className="border px-4 py-2">
+                                  {filteredItem.frequencyOfCalling}
+                                </td>
+                                <td className="border px-4 py-2">
+                                  {filteredItem.generationTime}
+                                </td>
+                                <td className="border px-4 py-2">
+                                  {filteredItem.status}
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      )}
                     </table>
                   </div>
                 </div>
@@ -185,24 +230,36 @@ const CounterExecPanel = () => {
                   <h3 className="text-dark hover:text-primary mb-4 block text-xl font-semibold sm:text-[22px] md:text-xl lg:text-[22px] xl:text-xl 2xl:text-[22px]">
                     Customer List
                   </h3>
-                  <table class="table-auto">
+                  <table className="table-auto">
                     <thead>
                       <tr>
-                        <th class="px-4 py-2">Id</th>
-                        <th class="px-4 py-2">Service Type</th>
-                        <th class="px-4 py-2"></th>
+                        <th className="px-4 py-2">Id</th>
+                        <th className="px-4 py-2">Service Type</th>
+                        <th className="px-4 py-2"></th>
                       </tr>
                     </thead>
-                    <tbody>
-                      {counterData
-                        .filter((item) => item.status === "PENDING")
-                        .map((filteredItem) => (
-                          <tr>
-                            <td class="border px-4 py-2">{filteredItem.id}</td>
-                            <td class="border px-4 py-2">{serviceName}</td>
-                          </tr>
-                        ))}
-                    </tbody>
+                    {counterData.length === 0 ? (
+                      <tbody>
+                        <tr>
+                          <td>NO token generated</td>
+                        </tr>
+                      </tbody>
+                    ) : (
+                      <tbody>
+                        {counterData
+                          .filter((item) => item.status === "PENDING")
+                          .map((filteredItem) => (
+                            <tr>
+                              <td className="border px-4 py-2">
+                                {filteredItem.id}
+                              </td>
+                              <td className="border px-4 py-2">
+                                {serviceName}
+                              </td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    )}
                   </table>
                 </div>
               </div>
