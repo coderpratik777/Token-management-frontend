@@ -30,7 +30,7 @@ function App() {
             path="/login/counter-executive"
             element={<CounterExecLogin />}
           />
-          <Route path="/admin" element={<AdminPanel />} />
+          {/* <Route path="/admin" element={<AdminPanel />} /> */}
           <Route path="/counter-executive" element={<CounterExecPanel />} />
           <Route path="/customer-panel" element={<CustomerPanel />} />
           <Route path="/all-counter-panel" element={<AllCountersPanel />} />

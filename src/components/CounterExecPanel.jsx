@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { func } from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const CounterExecPanel = () => {
   const [counterData, setCounterData] = useState([]);
-  const [serviceData, setServiceData] = useState({});
-  const [serviceName, setServiceName] = useState("");
+  const [serviceType, setServiceType] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,22 +29,19 @@ const CounterExecPanel = () => {
     )}`;
 
     axios.get(url).then((response) => {
-      // console.log(response.data);
       localStorage.setItem("counterData", JSON.stringify(response.data));
       setCounterData(JSON.parse(localStorage.getItem("counterData")));
     });
 
-    //not used
-    let url2 = `http://localhost:8080/get-service?sid=${JSON.parse(
-      localStorage.getItem("counterid")
-    )}`;
-
-    axios.get(url2).then((response) => {
-      // console.log(response.data.serviceName);
-      setServiceName(response.data.serviceName);
-      // console.log(serviceName);
-    });
-  }, []);
+    axios
+      .get("http://localhost:8080/get-all-sub-service")
+      .then(function (response) {
+        setServiceType(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, [navigate]);
 
   const call = () => {
     if (counterData.length > 0) {
@@ -57,8 +52,6 @@ const CounterExecPanel = () => {
           localStorage.getItem("counterid")
         )}`;
         axios.get(url).then((response) => {
-          // setServiceData(response.data)
-          // console.log(serviceData);
           let temp = JSON.parse(localStorage.getItem("counterData"));
           temp[0].status = "ACTIVE";
           localStorage.setItem("counterData", JSON.stringify(temp));
@@ -83,7 +76,7 @@ const CounterExecPanel = () => {
 
   const Served = async () => {
     console.log("served");
-    const response = await fetch("http://localhost:8080/changestatus", {
+    await fetch("http://localhost:8080/changestatus", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -249,12 +242,15 @@ const CounterExecPanel = () => {
                         {counterData
                           .filter((item) => item.status === "PENDING")
                           .map((filteredItem) => (
-                            <tr>
+                            <tr key={filteredItem.id}>
                               <td className="border px-4 py-2">
                                 {filteredItem.id}
                               </td>
                               <td className="border px-4 py-2">
-                                {serviceName}
+                                {serviceType[filteredItem.servicetypeId]
+                                  ? serviceType[filteredItem.servicetypeId - 1]
+                                      .serviceName
+                                  : "Servicetype"}
                               </td>
                             </tr>
                           ))}
