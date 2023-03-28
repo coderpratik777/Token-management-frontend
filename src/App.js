@@ -16,6 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import AddCounter from "./components/Admin/AdminPanel/AddCounter";
 import AdminDashboard from "./components/Admin/AdminDashBoard";
 import AddServices from "./components/Admin/AdminPanel/AddService";
+import AddCounterExecutive from "./components/Admin/AdminPanel/AddCounterExecutive";
 
 function App() {
   return (
@@ -35,9 +36,10 @@ function App() {
           <Route path="/customer-panel" element={<CustomerPanel />} />
           <Route path="/all-counter-panel" element={<AllCountersPanel />} />
           <Route path="/counter" element={<Counter />} />
-          <Route path="/Add/Counter" element={<AddCounter />} />
-          <Route path="/Add/Service" element={<AddServices />} />
-          <Route path="/Admin/Dashboard" element={<AdminDashboard/>} />
+          <Route path="/add/counter" element={<AddCounter />} />
+          <Route path="/add/service" element={<AddServices />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard/>} />
+          <Route path="/admin/addcounterexecutive" element={<AddCounterExecutive/>} />
         </Routes>
       </Router>
     </Fragment>
