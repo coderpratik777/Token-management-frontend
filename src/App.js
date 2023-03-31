@@ -5,7 +5,6 @@ import Navbar from "./components/Navbar";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AdminLogin from "./components/Admin/AdminLogin";
 import CounterExecLogin from "./components/CounterExecLogin";
-import AdminPanel from "./components/Admin/AdminPanel";
 import CustomerPanel from "./components/CustomerPanel";
 import CounterExecPanel from "./components/CounterExecPanel";
 import AllCountersPanel from "./components/AllCountersPanel";
@@ -16,6 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 import AddCounter from "./components/Admin/AdminPanel/AddCounter";
 import AdminDashboard from "./components/Admin/AdminDashBoard";
 import AddServices from "./components/Admin/AdminPanel/AddService";
+import AddCounterExecutive from "./components/Admin/AdminPanel/AddCounterExecutive";
 
 function App() {
   return (
@@ -30,14 +30,17 @@ function App() {
             path="/login/counter-executive"
             element={<CounterExecLogin />}
           />
-          {/* <Route path="/admin" element={<AdminPanel />} /> */}
           <Route path="/counter-executive" element={<CounterExecPanel />} />
           <Route path="/customer-panel" element={<CustomerPanel />} />
           <Route path="/all-counter-panel" element={<AllCountersPanel />} />
           <Route path="/counter" element={<Counter />} />
-          <Route path="/Add/Counter" element={<AddCounter />} />
-          <Route path="/Add/Service" element={<AddServices />} />
-          <Route path="/Admin/Dashboard" element={<AdminDashboard/>} />
+          <Route path="/add/counter" element={<AddCounter />} />
+          <Route path="/add/service" element={<AddServices />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route
+            path="/admin/addcounterexecutive"
+            element={<AddCounterExecutive />}
+          />
         </Routes>
       </Router>
     </Fragment>

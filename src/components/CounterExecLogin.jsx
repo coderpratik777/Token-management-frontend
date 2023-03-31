@@ -13,7 +13,10 @@ const CounterExecLogin = () => {
     if (localStorage.getItem("counterid")) {
       navigate("/counter-executive");
     }
-  }, []);
+    if (localStorage.getItem("adminId")) {
+      navigate("/admin/dashboard");
+    }
+  }, [navigate]);
 
   const submit = () => {
     var jsonData = JSON.stringify(userData);

@@ -17,13 +17,12 @@ const Navbar = () => {
             <span className="ml-3 text-xl">Bank Token</span>
           </Link>
           {!(
-            localStorage.getItem("counterid") || localStorage.getItem("adminid")
+            localStorage.getItem("counterid") || localStorage.getItem("adminId")
           ) && (
-            <nav className="flex flex-wrap space-x-24 items-center text-base justify-center">
+            <nav className="flex flex-wrap space-x-12 items-center text-base justify-center">
               <Link to="/login/admin" className=" hover:text-gray-900">
                 Admin Login
               </Link>
-
               <Link
                 to="/login/counter-executive"
                 className=" hover:text-gray-900"
@@ -32,11 +31,18 @@ const Navbar = () => {
               </Link>
             </nav>
           )}
-          {localStorage.getItem("counterid") && (
+          {(localStorage.getItem("adminId") ||
+            localStorage.getItem("counterid")) && (
             <button
               type="button"
               onClick={() => {
-                localStorage.removeItem("counterid");
+                if (localStorage.getItem("adminId")) {
+                  localStorage.removeItem("adminId");
+                  navigate("/login/admin");
+                } else {
+                  localStorage.removeItem("counterid");
+                  navigate("/login/counter-executive");
+                }
                 toast.success("Logged out.", {
                   position: "top-center",
                   autoClose: 2000,
@@ -47,7 +53,6 @@ const Navbar = () => {
                   progress: undefined,
                   theme: "light",
                 });
-                navigate("/login/counter-executive");
               }}
               className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0"
             >

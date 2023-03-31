@@ -4,42 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// const services = [
-//   { name: "Cash Service", value: "CashService" },
-//   { name: "Loan Service", value: "LoanService" },
-//   { name: "Account Service", value: "AccountService" },
-//   { name: "Cheque Service", value: "ChequeService" },
-//   { name: "Other Service", value: "OtherService" },
-// ];
-
-// const serviceDetails = {
-//   CashService: [
-//     { name: "Cash Deposit", value: "CashDeposit" },
-//     { name: "Cash Withdrawal", value: "CashWithdrawal" },
-//   ],
-//   LoanService: [
-//     { name: "Personal Loan", value: "PersonalLoan" },
-//     { name: "Auto Loan", value: "AutoLoan" },
-//     { name: "Small Business Loan", value: "SmallBusinessLoan" },
-//   ],
-//   AccountService: [
-//     { name: "Account Opening", value: "AccountOpening" },
-//     { name: "Account Closing", value: "AccountClosing" },
-//     { name: "Balance Enquiry", value: "BalanceEnquiry" },
-//     { name: "Account Statement Request", value: "AccountStatementRequest" },
-//     { name: "Account Modification", value: "AccountModification" },
-//   ],
-//   ChequeService: [
-//     { name: "Cheque Deposit", value: "ChequeDeposit" },
-//     { name: "Cheque Encashment", value: "ChequeEncashment" },
-//   ],
-//   OtherService: [
-//     { name: "Financial Counselling", value: "FinancialCounselling" },
-//     { name: "Online Banking", value: "OnlineBanking" },
-//     { name: "Mobile Banking", value: "MobileBanking" },
-//   ],
-// };
-
 const CustomerPanel = () => {
   const navigate = useNavigate();
 
@@ -50,17 +14,11 @@ const CustomerPanel = () => {
 
   useEffect(() => {
     if (localStorage.getItem("counterid")) {
-      toast.error("You do not have access to generate token.", {
-        position: "top-center",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
       navigate("/counter-executive");
+    }
+
+    if (localStorage.getItem("adminId")) {
+      navigate("/admin/dashboard");
     }
 
     axios
@@ -74,8 +32,8 @@ const CustomerPanel = () => {
   }, [navigate]);
 
   useEffect(() => {
-    fetchedServices.map((eachService) => {
-      return axios
+    fetchedServices.map(async (eachService) => {
+      return await axios
         .get(`http://localhost:8080/get-sub-service?sid=${eachService.id}`)
         .then(function (response) {
           setFetchedServiceDetails((prev) => {
@@ -112,20 +70,25 @@ const CustomerPanel = () => {
           subServices: selectedOptions,
         })
         .then(function (response) {
+          let userToken = [];
+          response.data.map((e) => {
+            return userToken.push(e.id);
+          });
+
           if (queueLength === 0) {
-            localStorage.setItem("UserToken", JSON.stringify(response.data));
+            localStorage.setItem("UserToken", JSON.stringify(userToken));
           } else {
             if (JSON.parse(localStorage.getItem("UserToken"))) {
               localStorage.setItem(
                 "UserToken",
                 JSON.stringify(
                   JSON.parse(localStorage.getItem("UserToken")).concat(
-                    response.data
+                    userToken
                   )
                 )
               );
             } else {
-              localStorage.setItem("UserToken", JSON.stringify(response.data));
+              localStorage.setItem("UserToken", JSON.stringify(userToken));
             }
           }
           toast.success("Token Generated", {

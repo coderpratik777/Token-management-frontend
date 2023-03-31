@@ -1,10 +1,29 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const AddServices = () => {
   const [servicetypes, setServicetypes] = useState([{ serviceName: "" }]);
   const [serviceName, setServiceName] = useState("");
   const [ValidationError, setValidationError] = useState([]);
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!localStorage.getItem("adminId")) {
+      toast.error("Login as a admin first.", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      navigate("/login/admin");
+    }
+  }, [navigate]);
 
   const servicetypeInput = (index, event) => {
     const updatedservicetype = [...servicetypes];
@@ -26,9 +45,17 @@ const AddServices = () => {
 
   // Add/Submit of type of service
   const handleSubmit = async (event) => {
-    window.location.reload();
     event.preventDefault();
-    const data = { serviceName, servicetypes };
+
+    const data = {
+      serviceName: serviceName.replace(" ", ""),
+      servicetypes: servicetypes
+        .map((e) => {
+          return { serviceName: e.serviceName.trim().replace(" ", "") };
+        })
+        .filter((e) => e.serviceName !== ""),
+    };
+
     const errors = [];
     for (let i = 0; i < servicetypes.length; ++i) {
       const servicetype = servicetypes[i];
@@ -40,12 +67,36 @@ const AddServices = () => {
       setValidationError(errors);
       return;
     }
-    setValidationError([]);
     console.log(data);
-    let url = `http://localhost:8080/add/service`;
-    await axios.post(url, data).then((response) => {
-      alert(response.data);
-    });
+    if (data.servicetypes.length === 0) {
+      toast.warning("Service type cant be empty.", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } else {
+      setValidationError([]);
+      let url = `http://localhost:8080/add/service`;
+      await axios.post(url, data).then((response) => {
+        toast.success(response.data, {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      });
+      setServiceName("");
+      setServicetypes([{ serviceName: "" }]);
+    }
   };
 
   return (
@@ -58,7 +109,7 @@ const AddServices = () => {
           Manager of Apli bank
         </h1>
       </div>
-      <div class="w-full max-w-md">
+      <div className="w-full max-w-md">
         <h1 className="sm:text-2xl font-medium title-font items-center text-gray-700 pl-20 pb-8">
           Add Service And It's Types
         </h1>
