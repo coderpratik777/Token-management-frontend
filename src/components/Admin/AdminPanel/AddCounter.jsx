@@ -85,7 +85,7 @@ const AddCounter = () => {
           <h1 className="sm:text-2xl font-medium title-font  text-gray-700 ml-48  pb-6">
             Add Counter
           </h1>
-          <form className="bg-white border-2 border-gray-300 pt-4 pb-10 shadow-md rounded items-center px-8 pb-8 mb-4">
+          <form className="bg-white border-2 border-gray-300 pt-4 shadow-md rounded items-center px-8 pb-8 mb-4">
             <br />
             <pre className=" text-lg">
               Counter Name :{" "}
