@@ -10,9 +10,11 @@ const CounterExecLogin = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    //no need to come here if already logged in
     if (localStorage.getItem("counterid")) {
       navigate("/counter-executive");
     }
+    //admin not allowed here
     if (localStorage.getItem("adminId")) {
       navigate("/admin/dashboard");
     }
@@ -27,7 +29,7 @@ const CounterExecLogin = () => {
         },
       })
       .then((response) => {
-        if (response.data.st === "login") {
+        if (response.data.status) {
           localStorage.setItem("counterid", JSON.stringify(response.data.cid));
           toast.success("Welcome back!", {
             position: "top-center",
@@ -40,12 +42,23 @@ const CounterExecLogin = () => {
             theme: "light",
           });
           navigate("/counter-executive");
+        } else {
+          toast.error(response.data.messsageIfAny, {
+            position: "top-center",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
         }
       });
   };
 
   return (
-    <section className="bg-gray-50">
+    <section className="">
       <div className="flex flex-col items-center px-6 mx-auto py-12 lg:py-24">
         <div className="w-full bg-white rounded-lg shadow-xl md:mt-0 sm:max-w-md xl:p-0 ">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">

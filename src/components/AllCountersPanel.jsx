@@ -3,7 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const AllCountersPanel = () => {
-  const [queueData, setQueueData] = useState({});
+  const [queueMap, setQueueMap] = useState({});
+  const [pendingQueueMap, setPendingQueueMap] = useState({});
   const [userTokens, setUserTokens] = useState([]);
   const [userTokenData, setUserTokenData] = useState([]);
   const [counters, setCounters] = useState([]);
@@ -13,30 +14,34 @@ const AllCountersPanel = () => {
 
   useEffect(() => {
     async function fetchData() {
+      //counter executive not allowed on this screen
       if (localStorage.getItem("counterid")) {
         navigate("/counter-executive");
       }
-
+      // manager not allowed on this screen
       if (localStorage.getItem("adminId")) {
         navigate("/admin/dashboard");
       }
+
+      //get queuemap
       await axios
-        .get("http://localhost:8080/gettoken")
+        .get("http://localhost:8080/gettokenmap")
         .then(function (response) {
-          setQueueData(response.data);
-          let isMapEmpty = true;
-          Object.keys(response.data).map((counterNo) => {
-            if (response.data[counterNo].length > 0) {
-              isMapEmpty = false;
-            }
-          });
-          if (isMapEmpty) {
-            localStorage.removeItem("UserToken");
-          }
+          setQueueMap(response.data);
         })
         .catch(function (error) {
           console.log(error);
         });
+
+      // let isMapEmpty = true;
+      //   Object.keys(response.data).map((counterNo) => {
+      //     if (response.data[counterNo].length > 0) {
+      //       isMapEmpty = false;
+      //     }
+      //   });
+      //   if (isMapEmpty) {
+      //     localStorage.removeItem("UserToken");
+      //   }
 
       if (JSON.parse(localStorage.getItem("UserToken"))) {
         setUserTokens(JSON.parse(localStorage.getItem("UserToken")));
@@ -75,7 +80,7 @@ const AllCountersPanel = () => {
     let temp = [];
     userTokens.map(async (id) => {
       return await axios
-        .get(`http://localhost:8080/get-token-data-from-queue?id=${id}`)
+        .get(`http://localhost:8080/get-token-info?id=${id}`)
         .then(function (response) {
           if (response.data.id !== 0) {
             temp.push(response.data);
@@ -89,15 +94,15 @@ const AllCountersPanel = () => {
   }, [userTokens]);
 
   return (
-    <section className="text-gray-600 body-font w-full px-5 py-10 flex">
-      <div className="flex flex-wrap w-2/3 h-max">
-        {Object.keys(queueData).map((eachCounterNo) => {
+    <section className="text-gray-600 body-font w-full px-5 py-10 flex flex-col md:flex-row ">
+      <div className="flex flex-wrap w-full md:w-2/3 h-max">
+        {Object.keys(queueMap).map((eachCounterNo) => {
           return (
             <div
               className="p-3 lg:w-1/3 h-max cursor-pointer"
               key={eachCounterNo}
             >
-              {queueData[eachCounterNo].length > 0 && (
+              {queueMap[eachCounterNo].length > 0 && (
                 <div
                   key={eachCounterNo}
                   onClick={() => {
@@ -106,7 +111,7 @@ const AllCountersPanel = () => {
                     });
                   }}
                 >
-                  <div className="h-full bg-gray-100 bg-opacity-75 p-8 rounded-lg overflow-hidden text-center relative hover:shadow-lg">
+                  <div className="h-full bg-gray-100 bg-opacity-75 p-6 rounded-lg overflow-hidden text-center relative hover:shadow-lg">
                     <h1 className="title-font sm:text-2xl text-xl font-medium text-gray-900 mb-3">
                       {counters[eachCounterNo - 1] ? (
                         <div>
@@ -120,9 +125,9 @@ const AllCountersPanel = () => {
                       )}
                     </h1>
                     <div className="leading-relaxed mb-3">
-                      {services[eachCounterNo-2] ? (
+                      {services[eachCounterNo - 2] ? (
                         <div>
-                          {services[eachCounterNo-2].serviceName.replace(
+                          {services[eachCounterNo - 2].serviceName.replace(
                             /([A-Z])/g,
                             " $1"
                           )}
@@ -132,16 +137,15 @@ const AllCountersPanel = () => {
                       )}
                     </div>
                     <span className="text-indigo-500 inline-flex mb-3 items-center">
-                      {queueData[eachCounterNo].length} waiting
+                      {queueMap[eachCounterNo].length} waiting
                     </span>
                     <div className="tokens w-full flex flex-col">
-                      <div className="token flex bg-gray-200 p-2 rounded m-2">
-                        Token Queue :
-                        {queueData[eachCounterNo].map((eachToken) => {
+                      <div className="token flex bg-gray-200 p-2 items-center rounded m-2">
+                        Queue:
+                        {queueMap[eachCounterNo].map((eachToken) => {
                           return (
-                            <span key={eachToken.id}>
-                              {" "}
-                              {eachToken.id + " , "}
+                            <span className="mx-1" key={eachToken.id}>
+                              {eachToken.id}
                             </span>
                           );
                         })}

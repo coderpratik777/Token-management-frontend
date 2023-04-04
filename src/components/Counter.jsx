@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const Counter = (props) => {
+const Counter = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
   const [counters, setCounters] = useState([]);
-  const [services, setServices] = useState([]);
   const [serviceTypes, setServiceTypes] = useState([]);
   const [counterNo, setCounterNo] = useState(0);
 
@@ -17,11 +16,13 @@ const Counter = (props) => {
   const [pendingQueue, setPendingQueue] = useState([]);
 
   useEffect(() => {
+    //only navigation from all counters page allowed
     if (location.state === null) {
       navigate("/all-counter-panel");
     } else {
       setCounterNo(location.state.counterClicked);
     }
+    //counter executive and manager not allowed here
     if (localStorage.getItem("counterid")) {
       navigate("/counter-executive");
     }
@@ -29,7 +30,7 @@ const Counter = (props) => {
     if (localStorage.getItem("adminId")) {
       navigate("/admin/dashboard");
     }
-  }, [navigate]);
+  }, [navigate, location.state]);
 
   useEffect(() => {
     async function fetchData() {
@@ -40,19 +41,11 @@ const Counter = (props) => {
         .then((response) => {
           setCounterData(response.data);
         });
+
       await axios
         .get("http://localhost:8080/get-counter")
         .then(function (response) {
           setCounters(response.data);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-
-      await axios
-        .get("http://localhost:8080/get-services")
-        .then(function (response) {
-          setServices(response.data);
         })
         .catch(function (error) {
           console.log(error);
@@ -92,15 +85,12 @@ const Counter = (props) => {
           )}
         </h1>
         <div className="text-xl font-semibold">
-          Current Token in service:{" "}
-          {counterData.map((e) => {
-            return e.status === "ACTIVE" && <span key={e.id}>{e.id}</span>;
-          })}
+          Current Token in service: {localStorage.getItem("activeToken")}
         </div>
       </div>
       <div className="section w-full p-5 flex">
         <div className="w-2/5 bg-gray-100 p-5 flex flex-col space-y-2 m-2">
-          <span className="font-semibold text-xl">Current queue</span>
+          <span className="font-semibold text-xl">In queue</span>
           <table className="tokenqueue">
             <tbody>
               <tr>
@@ -112,10 +102,10 @@ const Counter = (props) => {
               {counterData.map((filteredItem) => (
                 <tr
                   key={filteredItem.id}
-                  className={`hover:bg-gray-200 ${
-                    filteredItem.status === "ACTIVE"
-                      ? "bg-green-500"
-                      : "bg-gray-100"
+                  className={` ${
+                    userTokens.includes(filteredItem.id)
+                      ? "bg-green-300 hover:bg-green-400"
+                      : "bg-gray-100 hover:bg-gray-200"
                   }`}
                 >
                   <td className="px-4 py-2 border">{filteredItem.id}</td>
@@ -149,7 +139,11 @@ const Counter = (props) => {
                 {pendingQueue.map((filteredItem) => (
                   <tr
                     key={filteredItem.id}
-                    className={`bg-gray-100 hover:bg-gray-200`}
+                    className={`  ${
+                      userTokens.includes(filteredItem.id)
+                        ? "bg-green-300 hover:bg-green-400"
+                        : "bg-gray-100 hover:bg-gray-200"
+                    }`}
                   >
                     <td className="px-4 py-2 border">{filteredItem.id}</td>
                     <td className="border px-4 py-2">

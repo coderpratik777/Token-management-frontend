@@ -56,7 +56,7 @@ const CustomerPanel = () => {
     } else {
       let queueLength;
       await axios
-        .get("http://localhost:8080/gettoken")
+        .get("http://localhost:8080/gettokenmap")
         .then(function (response) {
           queueLength = Object.keys(response.data).length;
         })

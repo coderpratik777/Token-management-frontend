@@ -8,14 +8,67 @@ const CounterExecPanel = () => {
   const [counterData, setCounterData] = useState([]);
   const [serviceTypes, setServiceTypes] = useState([]);
   const [pendingQueue, setPendingQueue] = useState([]);
-  const [refresh, setRefresh] = useState(0);
+  const [activeToken, setActiveToken] = useState({});
   const navigate = useNavigate();
   const [count, setCount] = useState(0);
 
+  //fetch data for queue and pending queue
+  const fetchData = async () => {
+    // if (JSON.parse(localStorage.getItem("counterid")) === 1) {
+    //   await axios.get(`http://localhost:8080/gettoken`).then((response) => {
+    //     let temp = response.data;
+    //     let allTokens = [];
+    //     Object.keys(temp).map((e) => {
+    //       allTokens = allTokens.concat(temp[e]);
+    //     });
+    //     console.log(allTokens);
+    //     localStorage.setItem("counterData", JSON.stringify(allTokens));
+    //     setCounterData(allTokens);
+    //   });
+    // } else {
+    // }
+
+    await axios
+      .get(
+        `http://localhost:8080/gettokencounters?cid=${JSON.parse(
+          localStorage.getItem("counterid")
+        )}`
+      )
+      .then((response) => {
+        setCounterData(response.data);
+      });
+
+    await axios
+      .get(
+        `http://localhost:8080/getpendingqueue?counterid=${JSON.parse(
+          localStorage.getItem("counterid")
+        )}`
+      )
+      .then((response) => {
+        setPendingQueue(response.data);
+      });
+
+    if (localStorage.getItem("activeToken")) {
+      await axios
+        .get(
+          `http://localhost:8080/get-token-info?id=${JSON.parse(
+            localStorage.getItem("activeToken")
+          )}`
+        )
+        .then((response) => {
+          setActiveToken(response.data);
+        });
+    } else {
+      setActiveToken({});
+    }
+  };
+
   useEffect(() => {
+    //no admin allowed
     if (localStorage.getItem("adminId")) {
       navigate("/admin/dashboard");
     }
+    //if counter not logged
     if (!localStorage.getItem("counterid")) {
       toast.error("Please login as a Counter Executive First", {
         position: "top-center",
@@ -29,59 +82,19 @@ const CounterExecPanel = () => {
       });
       navigate("/login/counter-executive");
     }
-    async function fetchData() {
-      let url = `http://localhost:8080/gettokencounters?cid=${JSON.parse(
-        localStorage.getItem("counterid")
-      )}`;
 
-      // if (JSON.parse(localStorage.getItem("counterid")) === 1) {
-      //   await axios.get(`http://localhost:8080/gettoken`).then((response) => {
-      //     let temp = response.data;
-      //     let allTokens = [];
-      //     Object.keys(temp).map((e) => {
-      //       allTokens = allTokens.concat(temp[e]);
-      //     });
-      //     console.log(allTokens);
-      //     localStorage.setItem("counterData", JSON.stringify(allTokens));
-      //     setCounterData(allTokens);
-      //   });
-      // } else {
-      // }
-      await axios.get(url).then((response) => {
-        localStorage.setItem("counterData", JSON.stringify(response.data));
-        setCounterData(response.data);
-      });
-
-      let url1 = `http://localhost:8080/getpendingqueue?counterid=${JSON.parse(
-        localStorage.getItem("counterid")
-      )}`;
-      await axios.get(url1).then((response) => {
-        setPendingQueue(response.data);
-      });
-
-      await axios
-        .get("http://localhost:8080/get-all-sub-service")
-        .then((response) => {
-          setServiceTypes(response.data);
-        });
-    }
+    //fetch all service type names just to display it.
+    axios.get("http://localhost:8080/get-all-sub-service").then((response) => {
+      setServiceTypes(response.data);
+    });
+    //fetch queue and pending queue
     fetchData();
-  }, [navigate, refresh]);
+  }, [navigate]);
 
-  const call = () => {
-    axios
-      .get(
-        `http://localhost:8080/getpendingqueue?counterid=${JSON.parse(
-          localStorage.getItem("counterid")
-        )}`
-      )
-      .then((response) => {
-        setPendingQueue(response.data);
-      });
-
+  const callNext = () => {
     if (counterData.length > 0) {
-      if (counterData[0].status === "ACTIVE") {
-        toast.success("Please serve the recent token first !.", {
+      if (localStorage.getItem("activeToken")) {
+        toast.warning("Serve the active token first!", {
           position: "top-center",
           autoClose: 2000,
           hideProgressBar: false,
@@ -94,51 +107,86 @@ const CounterExecPanel = () => {
       } else {
         if (count === 3 && pendingQueue.length !== 0) {
           setCount(0);
-          let url1 = `http://localhost:8080/gettopservicepq?counterid=${JSON.parse(
-            localStorage.getItem("counterid")
-          )}`;
-
-          axios.get(url1).then((response) => {
-            let temp = JSON.parse(localStorage.getItem("counterData"));
-            temp.unshift(response.data);
-            localStorage.setItem("counterData", JSON.stringify(temp));
-            setCounterData(JSON.parse(localStorage.getItem("counterData")));
-          });
+          axios
+            .get(
+              `http://localhost:8080/make-token-active?tokenId=${pendingQueue[0].id}`
+            )
+            .then(async (response) => {
+              if (response.data) {
+                localStorage.setItem("activeToken", pendingQueue[0].id);
+                await fetchData();
+                toast.success("Next customer Called.", {
+                  position: "top-center",
+                  autoClose: 2000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "light",
+                });
+              } else {
+                toast.success("Some error.", {
+                  position: "top-center",
+                  autoClose: 2000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "light",
+                });
+              }
+            });
         } else {
-          let url = `http://localhost:8080/gettopservice?cid=${JSON.parse(
-            localStorage.getItem("counterid")
-          )}`;
-          axios.get(url).then((response) => {
-            setRefresh(refresh + 1);
-          });
-          setCount(count + 1);
+          axios
+            .get(
+              `http://localhost:8080/make-token-active?tokenId=${counterData[0].id}`
+            )
+            .then(async (response) => {
+              if (response.data) {
+                localStorage.setItem("activeToken", counterData[0].id);
+                await fetchData();
+                toast.success("Next customer Called.", {
+                  position: "top-center",
+                  autoClose: 2000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "light",
+                });
+                setCount(count + 1);
+                if (counterData.length === 1) {
+                  await axios
+                    .get(
+                      `http://localhost:8080/copy-pendingqueue-to-counterqueue?counterid=${JSON.parse(
+                        localStorage.getItem("counterid")
+                      )}`
+                    )
+                    .then((response) => {
+                      fetchData();
+                    });
+                  setCount(0);
+                }
+              } else {
+                toast.success("Some error.", {
+                  position: "top-center",
+                  autoClose: 2000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "light",
+                });
+              }
+            });
         }
       }
-      toast.success("Next customer Called.", {
-        position: "top-center",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } else if (pendingQueue.length !== 0) {
-      async function updateCounterData() {
-        await axios
-          .get(
-            `http://localhost:8080/copy-pendingqueue-to-counterqueue?counterid=${JSON.parse(
-              localStorage.getItem("counterid")
-            )}`
-          )
-          .then((response) => {});
-      }
-      updateCounterData();
-      setCount(0);
-      setRefresh(refresh + 1);
     } else {
-      toast.success("No more tokens to serve..", {
+      toast.warning("No tokens in the queues", {
         position: "top-center",
         autoClose: 2000,
         hideProgressBar: false,
@@ -151,32 +199,30 @@ const CounterExecPanel = () => {
     }
   };
 
-  const Served = async () => {
-    let temp = JSON.parse(localStorage.getItem("counterData"));
-    if (counterData.length > 0 && temp[0].status === "ACTIVE") {
-      await fetch("http://localhost:8080/changestatus", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          cid: localStorage.getItem("counterid"),
-          st: "done",
-          tokenId: counterData[0].id,
-        }),
-      });
-
-      temp[0].status = "DONE";
-      localStorage.setItem("counterData", JSON.stringify(temp.slice(1)));
-      setCounterData(JSON.parse(localStorage.getItem("counterData")));
-      toast.success("Customer Served!", {
-        position: "top-center",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+  const Serve = async () => {
+    if (localStorage.getItem("activeToken")) {
+      await axios
+        .get(
+          `http://localhost:8080/serve-token?tokenId=${localStorage.getItem(
+            "activeToken"
+          )}`
+        )
+        .then((response) => {
+          if (response.data) {
+            toast.success("Customer Served!", {
+              position: "top-center",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+            });
+          }
+          localStorage.removeItem("activeToken");
+          fetchData();
+        });
     } else {
       toast.error("Please call the customer first !", {
         position: "top-center",
@@ -198,35 +244,54 @@ const CounterExecPanel = () => {
     });
   };
 
-  const Pending = async () => {
-    let temp = JSON.parse(localStorage.getItem("counterData"));
-    if (counterData.length > 0 && temp[0].status === "ACTIVE") {
+  const addToPending = async () => {
+    if (localStorage.getItem("activeToken")) {
       await axios
-        .post(
-          "http://localhost:8080/changestatus",
-          {
-            cid: JSON.parse(localStorage.getItem("counterid")),
-            st: "noshow",
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
+        .get(
+          `http://localhost:8080/addtoken-to-pending?tokenId=${localStorage.getItem(
+            "activeToken"
+          )}`
         )
         .then((response) => {
-          setRefresh(refresh + 1);
-          toast.warning("Sent to Pending queue", {
-            position: "top-center",
-            autoClose: 2000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          });
+          if (response.data) {
+            toast.warning("Sent to Pending queue", {
+              position: "top-center",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+            });
+          } else {
+            toast.warning("Abandoned", {
+              position: "top-center",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+            });
+          }
+          localStorage.removeItem("activeToken");
+          fetchData();
         });
+
+      if (counterData.length === 0) {
+        await axios
+          .get(
+            `http://localhost:8080/copy-pendingqueue-to-counterqueue?counterid=${JSON.parse(
+              localStorage.getItem("counterid")
+            )}`
+          )
+          .then((response) => {
+            fetchData();
+          });
+        setCount(0);
+      }
     } else {
       toast.error("Please call the customer first !", {
         position: "top-center",
@@ -239,194 +304,159 @@ const CounterExecPanel = () => {
         theme: "light",
       });
     }
-    setRefresh(refresh + 1);
   };
 
   return (
-    <div>
-      <section className="bg-[#F3F4F6] pt-20 pb-10 lg:pt-[120px] lg:pb-20">
-        <div className="container mx-auto">
-          <div className="flex flex-wrap -mx-4">
-            <div className="w-full px-4 md:w-1/2 xl:w-1/2">
-              <div className="mb-10 overflow-hidden bg-white rounded-lg">
-                <div className="p-8 text-center sm:p-9 md:p-7 xl:p-9">
-                  <h1 className="text-dark hover:text-primary mb-4 block text-xl font-semibold sm:text-[22px] md:text-xl lg:text-[22px] xl:text-xl 2xl:text-[22px]">
-                    Current service
-                  </h1>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      call();
-                    }}
-                    style={{ margin: "5px" }}
-                    className="text-body-color hover:border-primary hover:bg-indigo-900 inline-block rounded-full border border-[blue] py-2 px-7 text-base font-medium transition hover:text-white"
-                  >
-                    {" "}
-                    Call
-                  </button>
+    <section>
+      <div className="w-full text-center text-3xl font-semibold py-9">
+        Counter Executive
+      </div>
+      <div className="flex flex-wrap w-full justify-center">
+        <div className="bg-gray-100 w-full h-max px-4 py-8 lg:w-1/3 flex flex-col space-y-6 m-2 rounded-lg hover:shadow">
+          <div className="text-center w-full flex flex-col space-y-5">
+            <span className="text-2xl font-semibold">Current service</span>
+            <div className="btns flex space-x-3 w-full justify-center">
+              <button
+                type="button"
+                className="hover:bg-gray-700 rounded-lg border border-gray-500 w-max py-2 px-4 font-medium transition hover:text-white"
+                onClick={() => {
+                  callNext();
+                }}
+              >
+                Call Next
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  addToPending();
+                }}
+                className="hover:bg-yellow-500 rounded-lg border border-gray-500 w-max py-2 px-4 font-medium transition hover:text-white"
+              >
+                Move to Pending
+              </button>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      Pending();
-                    }}
-                    style={{ margin: "5px" }}
-                    className="text-body-color hover:border-primary hover:bg-indigo-900 inline-block rounded-full border border-[blue] py-2 px-7 text-base font-medium transition hover:text-white"
-                  >
-                    {" "}
-                    Not Showed
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      Served();
-                    }}
-                    style={{ margin: "5px" }}
-                    className="text-body-color hover:border-primary hover:bg-indigo-900 inline-block rounded-full border border-[blue] py-2 px-7 text-base font-medium transition hover:text-white"
-                  >
-                    {" "}
-                    Serve
-                  </button>
-                </div>
-                <div className="p-8 text-center sm:p-9 md:p-7 xl:p-9">
-                  <div>
-                    <table className="table-auto">
-                      <thead>
-                        <tr>
-                          <th className="px-4 py-2">Id</th>
-                          <th className="px-4 py-2">Expected Time</th>
-                          <th className="px-4 py-2">Frequency Of Caling</th>
-                          <th className="px-4 py-2">Generation Of Time</th>
-                          <th className="px-4 py-2">Status</th>
-                        </tr>
-                      </thead>
-                      {counterData.length === 0 ? (
-                        <tbody>
-                          <tr>
-                            <td>NO token generated</td>
-                          </tr>
-                        </tbody>
-                      ) : (
-                        <tbody>
-                          {counterData
-                            .filter((item) => item.status === "ACTIVE")
-                            .map((filteredItem) => (
-                              <tr key={filteredItem.id}>
-                                <td className="px-4 py-2 border">
-                                  {filteredItem.id}
-                                </td>
-                                <td className="px-4 py-2 border">
-                                  {filteredItem.expectedTime}
-                                </td>
-                                <td className="px-4 py-2 border">
-                                  {filteredItem.frequencyOfCalling}
-                                </td>
-                                <td className="px-4 py-2 border">
-                                  {filteredItem.generationTime}
-                                </td>
-                                <td className="px-4 py-2 border">
-                                  {filteredItem.status}
-                                </td>
-                              </tr>
-                            ))}
-                        </tbody>
-                      )}
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="w-full px-4 md:w-1/2 xl:w-1/4">
-              <div className="mb-10 overflow-hidden bg-white rounded-lg">
-                <div className="p-8 text-center sm:p-9 md:p-7 xl:p-9">
-                  <h3 className="text-dark hover:text-primary mb-4 block text-xl font-semibold sm:text-[22px] md:text-xl lg:text-[22px] xl:text-xl 2xl:text-[22px]">
-                    Customer List
-                  </h3>
-                  <table className="table-auto">
-                    <thead>
-                      <tr>
-                        <th className="px-4 py-2">Id</th>
-                        <th className="px-4 py-2">Service Type</th>
-                        <th className="px-4 py-2"></th>
-                      </tr>
-                    </thead>
-                    {counterData.length === 0 && pendingQueue.length === 0 ? (
-                      <tbody>
-                        <tr>
-                          <td>NO token generated</td>
-                        </tr>
-                      </tbody>
-                    ) : (
-                      <tbody>
-                        {counterData
-                          .filter((item) => item.status === "PENDING")
-                          .map((filteredItem) => (
-                            <tr key={filteredItem.id}>
-                              <td className="px-4 py-2 border">
-                                {filteredItem.id}
-                              </td>
-                              <td className="border px-4 py-2">
-                                {serviceTypes[filteredItem.servicetypeId]
-                                  ? serviceTypes[
-                                      filteredItem.servicetypeId - 1
-                                    ].serviceName.replace(/([A-Z])/g, " $1")
-                                  : filteredItem.servicetypeId}
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    )}
-                  </table>
-                </div>
-              </div>
-            </div>
-            <div className="w-full px-4 md:w-1/2 xl:w-1/4">
-              <div className="mb-10 overflow-hidden bg-white rounded-lg">
-                <div className="p-8 text-center sm:p-9 md:p-7 xl:p-9">
-                  <h3 className="text-dark hover:text-primary mb-4 block text-xl font-semibold sm:text-[22px] md:text-xl lg:text-[22px] xl:text-xl 2xl:text-[22px]">
-                    Pending List
-                  </h3>
-                  <table className="table-auto">
-                    <thead>
-                      <tr>
-                        <th className="px-4 py-2">Id</th>
-                        <th className="px-4 py-2">Service Type</th>
-                        <th className="px-4 py-2"></th>
-                      </tr>
-                    </thead>
-                    {pendingQueue.length === 0 ? (
-                      <tbody>
-                        <tr>
-                          <td>NO token generated</td>
-                        </tr>
-                      </tbody>
-                    ) : (
-                      <tbody>
-                        {pendingQueue.map((filteredItem) => (
-                          <tr key={filteredItem.id}>
-                            <td className="px-4 py-2 border">
-                              {filteredItem.id}
-                            </td>
-                            <td className="px-4 py-2 border">
-                              {serviceTypes[filteredItem.servicetypeId]
-                                ? serviceTypes[
-                                    filteredItem.servicetypeId - 1
-                                  ].serviceName.replace(/([A-Z])/g, " $1")
-                                : filteredItem.servicetypeId}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    )}
-                  </table>
-                </div>
-              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  Serve();
+                }}
+                className="hover:bg-green-500 rounded-lg border border-gray-500 w-max py-2 px-4 font-medium transition hover:text-white"
+              >
+                Serve
+              </button>
             </div>
           </div>
+          {localStorage.getItem("activeToken") ? (
+            <table className="text-center">
+              <thead>
+                <tr className="border border-gray-300 bg-gray-300">
+                  <th className="px-4 py-2">Id</th>
+                  <th className="px-4 py-2">Type of service</th>
+                  <th className="px-4 py-2">Times Called</th>
+                  <th className="px-4 py-2">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  key={activeToken.id}
+                  className="border border-gray-300 bg-gray-200"
+                >
+                  <td className="px-4 py-2 border-r-2 border-gray-300">
+                    {activeToken.id}
+                  </td>
+                  <td className="px-4 py-2 border-r-2 border-gray-300">
+                    {serviceTypes[activeToken.servicetypeId]
+                      ? serviceTypes[
+                          activeToken.servicetypeId - 1
+                        ].serviceName.replace(/([A-Z])/g, " $1")
+                      : activeToken.servicetypeId}
+                  </td>
+                  <td className="px-4 py-2 border-r-2 border-gray-300">
+                    {activeToken.frequencyOfCalling}
+                  </td>
+                  <td className="px-4 py-2">{activeToken.status}</td>
+                </tr>
+              </tbody>
+            </table>
+          ) : (
+            <span className="w-full text-center">No active token</span>
+          )}
         </div>
-      </section>
-    </div>
+        <div className="bg-gray-100 w-full h-max px-4 py-8 md:w-1/2 lg:w-1/4 flex flex-col items-center space-y-6 m-2 rounded-lg hover:shadow">
+          <span className="text-2xl font-semibold w-full text-center">
+            Customer List
+          </span>
+          {counterData.length === 0 ? (
+            <span>No token generated</span>
+          ) : (
+            <table className="w-4/5 text-center">
+              <thead>
+                <tr className="border border-gray-300 bg-gray-300">
+                  <th className="px-4 py-2">Id</th>
+                  <th className="px-4 py-2">Service Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                {counterData.map((item) => (
+                  <tr
+                    key={item.id}
+                    className="border border-gray-300 bg-gray-200 "
+                  >
+                    <td className="px-4 py-2 border-r-2 border-gray-300">
+                      {item.id}
+                    </td>
+                    <td className="px-4 py-2 ">
+                      {serviceTypes[item.servicetypeId]
+                        ? serviceTypes[
+                            item.servicetypeId - 1
+                          ].serviceName.replace(/([A-Z])/g, " $1")
+                        : item.servicetypeId}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+        <div className="bg-gray-100 w-full h-max px-4 py-8 md:w-1/2 lg:w-1/4 flex flex-col items-center space-y-6 m-2 rounded-lg hover:shadow">
+          <span className="text-2xl font-semibold w-full text-center">
+            Pending List
+          </span>
+
+          {pendingQueue.length === 0 ? (
+            <span className="w-full text-center">No token here</span>
+          ) : (
+            <table className="w-4/5 text-center">
+              <thead>
+                <tr className="border border-gray-300 bg-gray-300">
+                  <th className="px-4 py-2">Id</th>
+                  <th className="px-4 py-2">Service Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pendingQueue.map((item) => (
+                  <tr
+                    key={item.id}
+                    className="border border-gray-300 bg-gray-200 "
+                  >
+                    <td className="px-4 py-2 border-r-2 border-gray-300">
+                      {item.id}
+                    </td>
+                    <td className="px-4 py-2 ">
+                      {serviceTypes[item.servicetypeId]
+                        ? serviceTypes[
+                            item.servicetypeId - 1
+                          ].serviceName.replace(/([A-Z])/g, " $1")
+                        : item.servicetypeId}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
+    </section>
   );
 };
 
