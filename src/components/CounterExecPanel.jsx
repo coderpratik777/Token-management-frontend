@@ -9,26 +9,24 @@ const CounterExecPanel = () => {
   const [serviceTypes, setServiceTypes] = useState([]);
   const [pendingQueue, setPendingQueue] = useState([]);
   const [activeToken, setActiveToken] = useState({});
+  const [counterName,setCounterName]= useState("");
   const navigate = useNavigate();
   const [count, setCount] = useState(0);
 
+  
   //fetch data for queue and pending queue
   const fetchData = async () => {
-    // if (JSON.parse(localStorage.getItem("counterid")) === 1) {
-    //   await axios.get(`http://localhost:8080/gettoken`).then((response) => {
-    //     let temp = response.data;
-    //     let allTokens = [];
-    //     Object.keys(temp).map((e) => {
-    //       allTokens = allTokens.concat(temp[e]);
-    //     });
-    //     console.log(allTokens);
-    //     localStorage.setItem("counterData", JSON.stringify(allTokens));
-    //     setCounterData(allTokens);
-    //   });
-    // } else {
-    // }
-
-    await axios
+    if (counterName==="CatchAll") {
+      await axios.get(`http://localhost:8080/gettokenmap`).then((response) => {
+        let temp = response.data;
+        let allTokens = [];
+        Object.keys(temp).map((e) => {
+          allTokens = allTokens.concat(temp[e]);
+        });
+        setCounterData(allTokens);
+      });
+    } else {
+      await axios
       .get(
         `http://localhost:8080/gettokencounters?cid=${JSON.parse(
           localStorage.getItem("counterid")
@@ -37,7 +35,7 @@ const CounterExecPanel = () => {
       .then((response) => {
         setCounterData(response.data);
       });
-
+    }
     await axios
       .get(
         `http://localhost:8080/getpendingqueue?counterid=${JSON.parse(
@@ -87,9 +85,24 @@ const CounterExecPanel = () => {
     axios.get("http://localhost:8080/get-all-sub-service").then((response) => {
       setServiceTypes(response.data);
     });
+    
+    let getCounterName=`http://localhost:8080/get-counter-name?counterid=${JSON.parse(localStorage.getItem("counterid"))}`;
+    
+    axios
+      .get(getCounterName)
+      .then((response) => {
+        setCounterName(response.data);
+      });
+    
     //fetch queue and pending queue
-    fetchData();
+    
   }, [navigate]);
+
+  useEffect(()=>{
+    fetchData();
+  },[counterName])
+
+ 
 
   const callNext = () => {
     if (counterData.length > 0) {
@@ -109,13 +122,12 @@ const CounterExecPanel = () => {
           setCount(0);
           axios
             .get(
-              `http://localhost:8080/make-token-active?tokenId=${pendingQueue[0].id}`
+              `http://localhost:8080/make-token-active?tokenId=${pendingQueue[0].id}&cId=${localStorage.getItem("counterid")}`
             )
             .then(async (response) => {
               if (response.data) {
                 localStorage.setItem("activeToken", pendingQueue[0].id);
-                await fetchData();
-                toast.success("Next customer Called.", {
+                  toast.success("Next customer Called.", {
                   position: "top-center",
                   autoClose: 2000,
                   hideProgressBar: false,
@@ -137,11 +149,12 @@ const CounterExecPanel = () => {
                   theme: "light",
                 });
               }
+              fetchData();
             });
         } else {
           axios
             .get(
-              `http://localhost:8080/make-token-active?tokenId=${counterData[0].id}`
+              `http://localhost:8080/make-token-active?tokenId=${counterData[0].id}&cId=${localStorage.getItem("counterid")}`
             )
             .then(async (response) => {
               if (response.data) {
@@ -250,7 +263,7 @@ const CounterExecPanel = () => {
         .get(
           `http://localhost:8080/addtoken-to-pending?tokenId=${localStorage.getItem(
             "activeToken"
-          )}`
+          )}&cId=${localStorage.getItem("counterid")}`
         )
         .then((response) => {
           if (response.data) {
@@ -308,17 +321,17 @@ const CounterExecPanel = () => {
 
   return (
     <section>
-      <div className="w-full text-center text-3xl font-semibold py-9">
+      <div className="w-full text-3xl font-semibold text-center py-9">
         Counter Executive
       </div>
-      <div className="flex flex-wrap w-full justify-center">
-        <div className="bg-gray-100 w-full h-max px-4 py-8 lg:w-1/3 flex flex-col space-y-6 m-2 rounded-lg hover:shadow">
-          <div className="text-center w-full flex flex-col space-y-5">
+      <div className="flex flex-wrap justify-center w-full">
+        <div className="flex flex-col w-full px-4 py-8 m-2 space-y-6 bg-gray-100 rounded-lg h-max lg:w-1/3 hover:shadow">
+          <div className="flex flex-col w-full space-y-5 text-center">
             <span className="text-2xl font-semibold">Current service</span>
-            <div className="btns flex space-x-3 w-full justify-center">
+            <div className="flex justify-center w-full space-x-3 btns">
               <button
                 type="button"
-                className="hover:bg-gray-700 rounded-lg border border-gray-500 w-max py-2 px-4 font-medium transition hover:text-white"
+                className="px-4 py-2 font-medium transition border border-gray-500 rounded-lg hover:bg-gray-700 w-max hover:text-white"
                 onClick={() => {
                   callNext();
                 }}
@@ -330,7 +343,7 @@ const CounterExecPanel = () => {
                 onClick={() => {
                   addToPending();
                 }}
-                className="hover:bg-yellow-500 rounded-lg border border-gray-500 w-max py-2 px-4 font-medium transition hover:text-white"
+                className="px-4 py-2 font-medium transition border border-gray-500 rounded-lg hover:bg-yellow-500 w-max hover:text-white"
               >
                 Move to Pending
               </button>
@@ -340,7 +353,7 @@ const CounterExecPanel = () => {
                 onClick={() => {
                   Serve();
                 }}
-                className="hover:bg-green-500 rounded-lg border border-gray-500 w-max py-2 px-4 font-medium transition hover:text-white"
+                className="px-4 py-2 font-medium transition border border-gray-500 rounded-lg hover:bg-green-500 w-max hover:text-white"
               >
                 Serve
               </button>
@@ -349,7 +362,7 @@ const CounterExecPanel = () => {
           {localStorage.getItem("activeToken") ? (
             <table className="text-center">
               <thead>
-                <tr className="border border-gray-300 bg-gray-300">
+                <tr className="bg-gray-300 border border-gray-300">
                   <th className="px-4 py-2">Id</th>
                   <th className="px-4 py-2">Type of service</th>
                   <th className="px-4 py-2">Times Called</th>
@@ -359,7 +372,7 @@ const CounterExecPanel = () => {
               <tbody>
                 <tr
                   key={activeToken.id}
-                  className="border border-gray-300 bg-gray-200"
+                  className="bg-gray-200 border border-gray-300"
                 >
                   <td className="px-4 py-2 border-r-2 border-gray-300">
                     {activeToken.id}
@@ -382,8 +395,8 @@ const CounterExecPanel = () => {
             <span className="w-full text-center">No active token</span>
           )}
         </div>
-        <div className="bg-gray-100 w-full h-max px-4 py-8 md:w-1/2 lg:w-1/4 flex flex-col items-center space-y-6 m-2 rounded-lg hover:shadow">
-          <span className="text-2xl font-semibold w-full text-center">
+        <div className="flex flex-col items-center w-full px-4 py-8 m-2 space-y-6 bg-gray-100 rounded-lg h-max md:w-1/2 lg:w-1/4 hover:shadow">
+          <span className="w-full text-2xl font-semibold text-center">
             Customer List
           </span>
           {counterData.length === 0 ? (
@@ -391,7 +404,7 @@ const CounterExecPanel = () => {
           ) : (
             <table className="w-4/5 text-center">
               <thead>
-                <tr className="border border-gray-300 bg-gray-300">
+                <tr className="bg-gray-300 border border-gray-300">
                   <th className="px-4 py-2">Id</th>
                   <th className="px-4 py-2">Service Type</th>
                 </tr>
@@ -400,7 +413,7 @@ const CounterExecPanel = () => {
                 {counterData.map((item) => (
                   <tr
                     key={item.id}
-                    className="border border-gray-300 bg-gray-200 "
+                    className="bg-gray-200 border border-gray-300 "
                   >
                     <td className="px-4 py-2 border-r-2 border-gray-300">
                       {item.id}
@@ -418,8 +431,8 @@ const CounterExecPanel = () => {
             </table>
           )}
         </div>
-        <div className="bg-gray-100 w-full h-max px-4 py-8 md:w-1/2 lg:w-1/4 flex flex-col items-center space-y-6 m-2 rounded-lg hover:shadow">
-          <span className="text-2xl font-semibold w-full text-center">
+        <div className="flex flex-col items-center w-full px-4 py-8 m-2 space-y-6 bg-gray-100 rounded-lg h-max md:w-1/2 lg:w-1/4 hover:shadow">
+          <span className="w-full text-2xl font-semibold text-center">
             Pending List
           </span>
 
@@ -428,7 +441,7 @@ const CounterExecPanel = () => {
           ) : (
             <table className="w-4/5 text-center">
               <thead>
-                <tr className="border border-gray-300 bg-gray-300">
+                <tr className="bg-gray-300 border border-gray-300">
                   <th className="px-4 py-2">Id</th>
                   <th className="px-4 py-2">Service Type</th>
                 </tr>
@@ -437,7 +450,7 @@ const CounterExecPanel = () => {
                 {pendingQueue.map((item) => (
                   <tr
                     key={item.id}
-                    className="border border-gray-300 bg-gray-200 "
+                    className="bg-gray-200 border border-gray-300 "
                   >
                     <td className="px-4 py-2 border-r-2 border-gray-300">
                       {item.id}

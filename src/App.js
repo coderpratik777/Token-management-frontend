@@ -16,6 +16,7 @@ import AddCounter from "./components/Admin/AdminPanel/AddCounter";
 import AdminDashboard from "./components/Admin/AdminDashBoard";
 import AddServices from "./components/Admin/AdminPanel/AddService";
 import AddCounterExecutive from "./components/Admin/AdminPanel/AddCounterExecutive";
+import AddCatchAllCounter from "./components/Admin/AdminPanel/AddCatchAll";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
           <Route path="/add/counter" element={<AddCounter />} />
           <Route path="/add/service" element={<AddServices />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/catchallcounter" element={<AddCatchAllCounter />} />
           <Route
             path="/admin/addcounterexecutive"
             element={<AddCounterExecutive />}

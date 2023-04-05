@@ -100,28 +100,28 @@ const AddServices = () => {
   };
 
   return (
-    <section className="text-gray-600 body-font px-5 py-10 w-full flex flex-col items-center space-y-24">
-      <div className="flex flex-col text-center w-full space-y-2">
-        <h2 className="text-xs text-indigo-500 tracking-widest font-medium title-font">
+    <section className="flex flex-col items-center w-full px-5 py-10 space-y-24 text-gray-600 body-font">
+      <div className="flex flex-col w-full space-y-2 text-center">
+        <h2 className="text-xs font-medium tracking-widest text-indigo-500 title-font">
           Admin Dashboard Of Adding Service And It's Type
         </h2>
-        <h1 className="sm:text-3xl text-2xl font-medium title-font text-gray-900">
+        <h1 className="text-2xl font-medium text-gray-900 sm:text-3xl title-font">
           Manager of Apli bank
         </h1>
       </div>
       <div className="w-full max-w-md">
-        <h1 className="sm:text-2xl font-medium title-font items-center text-gray-700 pl-20 pb-8">
+        <h1 className="items-center pb-8 pl-20 font-medium text-gray-700 sm:text-2xl title-font">
           Add Service And It's Types
         </h1>
         <form
           onSubmit={handleSubmit}
-          className="bg-white border-2 border-gray-300 pt-7 pb-10 shadow-md rounded items-center px-8 pb-8 mb-4"
+          className="items-center px-8 pb-10 mb-4 bg-white border-2 border-gray-300 rounded shadow-md pt-7"
         >
-          <div className="mb-6 border-b-2  border-neutral-400 ">
-            <label className="block text-gray-600 font-medium md:text-left mb-1 md:mb-0 pr-4">
+          <div className="mb-6 border-b-2 border-neutral-400 ">
+            <label className="block pr-4 mb-1 font-medium text-gray-600 md:text-left md:mb-0">
               Service Name :{" "}
               <input
-                className="appearance-none border-2 border-gray-300 rounded w-full py-2 mb-6 mt-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                className="w-full px-4 py-2 mt-2 mb-6 leading-tight text-gray-700 border-2 border-gray-300 rounded appearance-none focus:outline-none focus:bg-white focus:border-blue-500"
                 type="text"
                 value={serviceName}
                 onChange={(event) => setServiceName(event.target.value)}
@@ -130,10 +130,10 @@ const AddServices = () => {
           </div>
           {servicetypes.map((servicetype, index) => (
             <div key={index} className="mb-6">
-              <label className="block text-gray-600  font-medium md:text-left mb-1 md:mb-0 pr-4">
+              <label className="block pr-4 mb-1 font-medium text-gray-600 md:text-left md:mb-0">
                 Type Of Service {index + 1} :
                 <input
-                  className="appearance-none border-2 border-gray-300 rounded w-full py-2 px-4 mt-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                  className="w-full px-4 py-2 mt-2 leading-tight text-gray-700 border-2 border-gray-300 rounded appearance-none focus:outline-none focus:bg-white focus:border-blue-500"
                   type="text"
                   value={servicetype.serviceName}
                   onChange={(event) => servicetypeInput(index, event)}
@@ -143,7 +143,7 @@ const AddServices = () => {
                 <p style={{ color: "red" }}>Type Of Service Name Is Required</p>
               )}
               <button
-                className="mt-5 mb-6 w-60 shadow-lg bg-red-500 hover:bg-red-700 focus:shadow-outline focus:outline-none text-white font-medium py-2 px-4 rounded"
+                className="px-4 py-2 mt-5 mb-6 font-medium text-white bg-red-500 rounded shadow-lg w-60 hover:bg-red-700 focus:shadow-outline focus:outline-none"
                 type="button"
                 onClick={() => handleRemoveservicetype(index)}
               >
@@ -154,13 +154,13 @@ const AddServices = () => {
           <button
             type="button"
             onClick={handleAddservicetype}
-            className="shadow-lg w-60 bg-teal-600 hover:bg-teal-800 focus:shadow-outline focus:outline-none text-white font-medium py-2 px-4 rounded"
+            className="px-4 py-2 font-medium text-white bg-teal-600 rounded shadow-lg w-60 hover:bg-teal-800 focus:shadow-outline focus:outline-none"
           >
             Add Type Of Service
           </button>
           <button
             type="submit"
-            className="shadow-lg w-30 ml-12 mt-6  bg-sky-600 hover:bg-sky-800 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
+            className="px-4 py-2 mt-6 ml-12 font-bold text-white rounded shadow-lg w-30 bg-sky-600 hover:bg-sky-800 focus:shadow-outline focus:outline-none"
           >
             Submit
           </button>

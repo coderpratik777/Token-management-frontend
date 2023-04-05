@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 
 const AddCounter = () => {
   const navigate = useNavigate();
@@ -70,31 +70,31 @@ const AddCounter = () => {
 
   return (
     <>
-      <section className="text-gray-600 body-font px-5 py-10 w-full flex flex-col items-center space-y-16">
-        <div className="flex flex-col text-center w-full space-y-2">
-          <h2 className="text-xs text-indigo-500 tracking-widest font-medium title-font">
+      <section className="flex flex-col items-center w-full px-5 py-10 space-y-16 text-gray-600 body-font">
+        <div className="flex flex-col w-full space-y-2 text-center">
+          <h2 className="text-xs font-medium tracking-widest text-indigo-500 title-font">
             Admin Dashboard Of Adding Counter And Assigning Service To Counter
           </h2>
-          <h1 className="sm:text-3xl text-2xl font-medium title-font text-gray-900">
+          <h1 className="text-2xl font-medium text-gray-900 sm:text-3xl title-font">
             Manager of Apli bank
           </h1>
         </div>
 
         {/* Adding Counter */}
         <div>
-          <h1 className="sm:text-2xl font-medium title-font  text-gray-700 ml-48  pb-6">
+          <h1 className="pb-6 ml-48 font-medium text-gray-700 sm:text-2xl title-font">
             Add Counter
           </h1>
-          <form className="bg-white border-2 border-gray-300 pt-4 shadow-md rounded items-center px-8 pb-8 mb-4">
+          <form className="items-center px-8 pt-4 pb-8 mb-4 bg-white border-2 border-gray-300 rounded shadow-md">
             <br />
-            <pre className=" text-lg">
+            <pre className="text-lg ">
               Counter Name :{" "}
               <input
                 type="text"
                 name="name"
                 value={counterData.name}
                 onChange={(event) => setcounterData(event.target.value)}
-                className="focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none w-80 text-md leading-6 text-slate-900 placeholder-slate-400 rounded-md py-2 pl-4 ring-1 ring-slate-200 shadow-sm"
+                className="py-2 pl-4 leading-6 rounded-md shadow-sm appearance-none focus:ring-2 focus:ring-blue-500 focus:outline-none w-80 text-md text-slate-900 placeholder-slate-400 ring-1 ring-slate-200"
                 placeholder="Counter Name..."
               />
               <br />
@@ -118,7 +118,7 @@ const AddCounter = () => {
               </div>
               {/* Assigning Counter Executive To Counter */}
               <div>
-                <label className="block mb-2 mt-10">
+                <label className="block mt-10 mb-2">
                   Select a Counter Executive
                 </label>
                 <select
@@ -144,10 +144,19 @@ const AddCounter = () => {
             <button
               type="submit"
               onClick={addCounter}
-              className="h-10 px-6 mt-12 ml-40 mb-2 font-semibold rounded-md bg-teal-600 hover:bg-teal-800	 text-white"
+              className="h-10 px-6 mt-12 mb-2 ml-5 font-semibold text-white bg-teal-600 rounded-md hover:bg-teal-800"
             >
               Add Counter
             </button>
+            <Link
+            to="/admin/catchallcounter">
+              <button
+              type="submit"
+              className="h-10 px-6 mt-12 font-semibold text-white bg-teal-600 rounded-md ml-14 hover:bg-teal-800"
+            >
+              Add Catch All Counter
+            </button>
+            </Link>
           </form>
         </div>
       </section>
