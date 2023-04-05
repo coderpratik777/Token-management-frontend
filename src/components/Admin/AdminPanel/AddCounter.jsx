@@ -20,12 +20,20 @@ const AddCounter = () => {
 
   // Adding Counter
   function addCounter(event) {
-    window.location.reload();
     event.preventDefault();
     console.log(data);
     let url = `http://localhost:8080/add/counter`;
     axios.post(url, data).then((response) => {
-      alert(response.data);
+      toast.success("Counter Added sucessfully!", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     });
   }
 

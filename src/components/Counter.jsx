@@ -76,8 +76,8 @@ const Counter = () => {
 
   return (
     <div>
-      <div className="flex flex-col text-center w-full space-y-3 py-8">
-        <h1 className="text-4xl font-bold title-font text-gray-900">
+      <div className="flex flex-col w-full py-8 space-y-3 text-center">
+        <h1 className="text-4xl font-bold text-gray-900 title-font">
           {counters[counterNo - 1] ? (
             <div>{counters[counterNo - 1].name.replace(/([A-Z])/g, " $1")}</div>
           ) : (
@@ -88,16 +88,16 @@ const Counter = () => {
           Current Token in service: {localStorage.getItem("activeToken")}
         </div>
       </div>
-      <div className="section w-full p-5 flex">
-        <div className="w-2/5 bg-gray-100 p-5 flex flex-col space-y-2 m-2">
-          <span className="font-semibold text-xl">In queue</span>
+      <div className="flex w-full p-5 section">
+        <div className="flex flex-col w-2/5 p-5 m-2 space-y-2 bg-gray-100">
+          <span className="text-xl font-semibold">In queue</span>
           <table className="tokenqueue">
             <tbody>
               <tr>
-                <td className="px-4 py-2 border font-medium">Token ID</td>
-                <td className="px-4 py-2 border font-medium">Service Type</td>
-                <td className="px-4 py-2 border font-medium">Times Called</td>
-                <td className="px-4 py-2 border font-medium">Status</td>
+                <td className="px-4 py-2 font-medium border">Token ID</td>
+                <td className="px-4 py-2 font-medium border">Service Type</td>
+                <td className="px-4 py-2 font-medium border">Times Called</td>
+                <td className="px-4 py-2 font-medium border">Status</td>
               </tr>
               {counterData.map((filteredItem) => (
                 <tr
@@ -109,8 +109,8 @@ const Counter = () => {
                   }`}
                 >
                   <td className="px-4 py-2 border">{filteredItem.id}</td>
-                  <td className="border px-4 py-2">
-                    {serviceTypes[filteredItem.servicetypeId]
+                  <td className="px-4 py-2 border">
+                    {serviceTypes[filteredItem.servicetypeId-1]
                       ? serviceTypes[
                           filteredItem.servicetypeId - 1
                         ].serviceName.replace(/([A-Z])/g, " $1")
@@ -125,16 +125,16 @@ const Counter = () => {
             </tbody>
           </table>
         </div>
-        <div className="w-2/5 bg-gray-100 p-5 flex flex-col space-y-2 m-2">
-          <span className="font-semibold text-xl">Pending queue</span>
+        <div className="flex flex-col w-2/5 p-5 m-2 space-y-2 bg-gray-100">
+          <span className="text-xl font-semibold">Pending queue</span>
           {pendingQueue.length > 0 && (
             <table className="tokenqueue">
               <tbody>
                 <tr>
-                  <td className="px-4 py-2 border font-medium">Token ID</td>
-                  <td className="border px-4 py-2 font-medium">Service Type</td>
-                  <td className="px-4 py-2 border font-medium">Times Called</td>
-                  <td className="px-4 py-2 border font-medium">Status</td>
+                  <td className="px-4 py-2 font-medium border">Token ID</td>
+                  <td className="px-4 py-2 font-medium border">Service Type</td>
+                  <td className="px-4 py-2 font-medium border">Times Called</td>
+                  <td className="px-4 py-2 font-medium border">Status</td>
                 </tr>
                 {pendingQueue.map((filteredItem) => (
                   <tr
@@ -146,7 +146,7 @@ const Counter = () => {
                     }`}
                   >
                     <td className="px-4 py-2 border">{filteredItem.id}</td>
-                    <td className="border px-4 py-2">
+                    <td className="px-4 py-2 border">
                       {serviceTypes[filteredItem.servicetypeId]
                         ? serviceTypes[
                             filteredItem.servicetypeId - 1
@@ -163,12 +163,12 @@ const Counter = () => {
             </table>
           )}
         </div>
-        <div className="w-1/5 bg-gray-100 p-5 flex flex-col space-y-2 m-2">
-          <span className="font-semibold text-xl">Your tokens</span>
+        <div className="flex flex-col w-1/5 p-5 m-2 space-y-2 bg-gray-100">
+          <span className="text-xl font-semibold">Your tokens</span>
           <table className="tokenqueue">
             <tbody>
               <tr>
-                <td className="px-4 py-2 border font-medium">Token ID</td>
+                <td className="px-4 py-2 font-medium border">Token ID</td>
               </tr>
               {pendingQueue.map((item) => (
                 <tr key={item.id}>

@@ -419,7 +419,7 @@ const CounterExecPanel = () => {
                       {item.id}
                     </td>
                     <td className="px-4 py-2 ">
-                      {serviceTypes[item.servicetypeId]
+                      {serviceTypes[item.servicetypeId-1]
                         ? serviceTypes[
                             item.servicetypeId - 1
                           ].serviceName.replace(/([A-Z])/g, " $1")
@@ -456,7 +456,7 @@ const CounterExecPanel = () => {
                       {item.id}
                     </td>
                     <td className="px-4 py-2 ">
-                      {serviceTypes[item.servicetypeId]
+                      {serviceTypes[item.servicetypeId-1]
                         ? serviceTypes[
                             item.servicetypeId - 1
                           ].serviceName.replace(/([A-Z])/g, " $1")

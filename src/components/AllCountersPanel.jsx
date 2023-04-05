@@ -93,13 +93,16 @@ const AllCountersPanel = () => {
     setUserTokenData(temp);
   }, [userTokens]);
 
+  console.log("user token data");
+  console.log(userTokenData);
+  
   return (
-    <section className="text-gray-600 body-font w-full px-5 py-10 flex flex-col md:flex-row ">
+    <section className="flex flex-col w-full px-5 py-10 text-gray-600 body-font md:flex-row ">
       <div className="flex flex-wrap w-full md:w-2/3 h-max">
         {Object.keys(queueMap).map((eachCounterNo) => {
           return (
             <div
-              className="p-3 lg:w-1/3 h-max cursor-pointer"
+              className="p-3 cursor-pointer lg:w-1/3 h-max"
               key={eachCounterNo}
             >
               {queueMap[eachCounterNo].length > 0 && (
@@ -111,8 +114,8 @@ const AllCountersPanel = () => {
                     });
                   }}
                 >
-                  <div className="h-full bg-gray-100 bg-opacity-75 p-6 rounded-lg overflow-hidden text-center relative hover:shadow-lg">
-                    <h1 className="title-font sm:text-2xl text-xl font-medium text-gray-900 mb-3">
+                  <div className="relative h-full p-6 overflow-hidden text-center bg-gray-100 bg-opacity-75 rounded-lg hover:shadow-lg">
+                    <h1 className="mb-3 text-xl font-medium text-gray-900 title-font sm:text-2xl">
                       {counters[eachCounterNo - 1] ? (
                         <div>
                           {counters[eachCounterNo - 1].name.replace(
@@ -124,7 +127,7 @@ const AllCountersPanel = () => {
                         <div>Counter {eachCounterNo}</div>
                       )}
                     </h1>
-                    <div className="leading-relaxed mb-3">
+                    <div className="mb-3 leading-relaxed">
                       {services[eachCounterNo - 2] ? (
                         <div>
                           {services[eachCounterNo - 2].serviceName.replace(
@@ -136,11 +139,11 @@ const AllCountersPanel = () => {
                         <div>Service {eachCounterNo}</div>
                       )}
                     </div>
-                    <span className="text-indigo-500 inline-flex mb-3 items-center">
+                    <span className="inline-flex items-center mb-3 text-indigo-500">
                       {queueMap[eachCounterNo].length} waiting
                     </span>
-                    <div className="tokens w-full flex flex-col">
-                      <div className="token flex bg-gray-200 p-2 items-center rounded m-2">
+                    <div className="flex flex-col w-full tokens">
+                      <div className="flex items-center p-2 m-2 bg-gray-200 rounded token">
                         Queue:
                         {queueMap[eachCounterNo].map((eachToken) => {
                           return (
@@ -158,15 +161,15 @@ const AllCountersPanel = () => {
           );
         })}
       </div>
-      <div className="tokendetails p-5 w-1/3">
-        <div className="bg-gray-100 p-5 rounded hover:shadow-lg">
+      <div className="w-1/3 p-5 tokendetails">
+        <div className="p-5 bg-gray-100 rounded hover:shadow-lg">
           <span className="text-xl font-semibold">Your token Details</span>
           {userTokenData.length === 0 ? (
             <div className="flex flex-col">
               <span className="py-3">You have availed 0 services</span>
               <Link
                 to="/customer-panel"
-                className="bg-indigo-500 w-max rounded text-white px-4 py-2"
+                className="px-4 py-2 text-white bg-indigo-500 rounded w-max"
               >
                 click to see available services
               </Link>
@@ -175,7 +178,7 @@ const AllCountersPanel = () => {
             <div>
               {userTokenData.map((e) => {
                 return (
-                  <div className="token flex flex-col py-3" key={e.id}>
+                  <div className="flex flex-col py-3 token" key={e.id}>
                     <span>
                       Token Id: <span className="font-semibold"> {e.id}</span>
                     </span>
@@ -197,7 +200,7 @@ const AllCountersPanel = () => {
                     <span>
                       Service Type:{" "}
                       <span className="font-semibold">
-                        {serviceTypes[e.servicetypeId] &&
+                        {serviceTypes[e.servicetypeId-1] &&
                           serviceTypes[e.servicetypeId - 1].serviceName.replace(
                             /([A-Z])/g,
                             " $1"
