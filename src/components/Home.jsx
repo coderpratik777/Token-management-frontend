@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { MdOutlineCountertops, MdGeneratingTokens } from "react-icons/md";
 import { BsArrowRightShort } from "react-icons/bs";
+import { FaSkullCrossbones } from "react-icons/fa";
 
 const Home = () => {
   return (
@@ -9,10 +10,10 @@ const Home = () => {
       <section className="flex flex-col items-center w-full px-5 py-24 space-y-24 text-gray-600 body-font">
         <div className="flex flex-col w-full space-y-2 text-center">
           <h2 className="text-xs font-medium tracking-widest text-indigo-500 title-font">
-            Services at your fingertips !
+            Your Money is safe with us......<FaSkullCrossbones className="inline"/>
           </h2>
           <h1 className="text-2xl font-medium text-gray-900 sm:text-3xl title-font">
-            Welcome To Apli bank Token System 
+            Welcome To Apli bank Token System
           </h1>
         </div>
         <div className="flex flex-col w-3/5 md:flex-row">

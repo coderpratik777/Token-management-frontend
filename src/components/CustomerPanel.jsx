@@ -4,10 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const CustomerPanel = () => {
+const CustomerPanel = (props) => {
+  const { setProgress } = props;
   const navigate = useNavigate();
 
-  const [selectedService, setSelectedService] = useState("");
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [fetchedServices, setFetchedServices] = useState([]);
   const [fetchedServiceDetails, setFetchedServiceDetails] = useState({});
@@ -22,19 +22,22 @@ const CustomerPanel = () => {
     }
 
     axios
-      .get("http://localhost:8080/get-services")
+      .get("http://localhost:8080/get/services")
       .then(function (response) {
         setFetchedServices(response.data);
       })
       .catch(function (error) {
         console.log(error);
       });
-  }, [navigate]);
+    setProgress(30);
+  }, [navigate, setProgress]);
 
   useEffect(() => {
     fetchedServices.map(async (eachService) => {
       return await axios
-        .get(`http://localhost:8080/get-sub-service?sid=${eachService.id}`)
+        .get(
+          `http://localhost:8080/get/subservices-of-service?sid=${eachService.id}`
+        )
         .then(function (response) {
           setFetchedServiceDetails((prev) => {
             return {
@@ -47,37 +50,36 @@ const CustomerPanel = () => {
           console.log(error);
         });
     });
-  }, [fetchedServices]);
+    setProgress(100);
+  }, [fetchedServices, setProgress]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (selectedOptions.length === 0) {
       console.log("Select at least 1 service");
     } else {
-      let queueLength;
-      await axios
-        .get("http://localhost:8080/gettokenmap")
-        .then(function (response) {
-          queueLength = Object.keys(response.data).length;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      console.log(selectedOptions);
+      // let queueLength;
+      // await axios
+      //   .get("http://localhost:8080/gettokenmap")
+      //   .then(function (response) {
+      //     queueLength = Object.keys(response.data).length;
+      //   })
+      //   .catch(function (error) {
+      //     console.log(error);
+      //   });
 
       await axios
         .post("http://localhost:8080/addtoken", {
-          service: selectedService,
           subServices: selectedOptions,
         })
         .then(function (response) {
-          let userToken = [];
-          response.data.map((e) => {
-            return userToken.push(e.id);
-          });
+          if (response.data.status) {
+            let userToken = [];
+            response.data.tokenList.map((e) => {
+              return userToken.push(e.tokenId);
+            });
 
-          if (queueLength === 0) {
-            localStorage.setItem("UserToken", JSON.stringify(userToken));
-          } else {
             if (JSON.parse(localStorage.getItem("UserToken"))) {
               localStorage.setItem(
                 "UserToken",
@@ -90,18 +92,30 @@ const CustomerPanel = () => {
             } else {
               localStorage.setItem("UserToken", JSON.stringify(userToken));
             }
+            setSelectedOptions([]);
+            toast.success(response.data.messsageIfAny, {
+              position: "top-center",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+            });
+            navigate("/all-counter-panel");
+          } else {
+            toast.error(response.data.messsageIfAny, {
+              position: "top-center",
+              autoClose: 2000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+            });
           }
-          toast.success("Token Generated", {
-            position: "top-center",
-            autoClose: 2000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          });
-          navigate("/all-counter-panel");
         })
         .catch(function (error) {
           console.log(error);
@@ -109,13 +123,8 @@ const CustomerPanel = () => {
     }
   };
 
-  const handleServiceChange = (e) => {
-    setSelectedService(e.target.value);
-    setSelectedOptions([]);
-  };
-
   const handleOptionChange = (e) => {
-    const option = e.target.value;
+    const option = +e.target.value;
     setSelectedOptions((prevSelectedOptions) => {
       if (prevSelectedOptions.includes(option)) {
         return prevSelectedOptions.filter(
@@ -148,17 +157,10 @@ const CustomerPanel = () => {
                 key={service.id}
                 className="w-full md:w-5/12j lg:w-1/6 bg-gray-100 flex rounded flex-col shadow hover:shadow-lg h-max m-2"
               >
-                <label className="flex items-center justify-between p-4">
+                <div className="flex items-center justify-between p-4">
                   {service.serviceName.replace(/([A-Z])/g, " $1")}
-                  <input
-                    type="radio"
-                    name="service"
-                    value={service.serviceName}
-                    checked={selectedService === service.serviceName}
-                    onChange={handleServiceChange}
-                  />
-                </label>
-                {selectedService === service.serviceName && (
+                </div>
+                {
                   <div className="flex-col bg-gray-200">
                     {fetchedServiceDetails[service.serviceName] ? (
                       fetchedServiceDetails[service.serviceName].map(
@@ -171,10 +173,8 @@ const CustomerPanel = () => {
                               <input
                                 type="checkbox"
                                 name="option"
-                                value={option.serviceName}
-                                checked={selectedOptions.includes(
-                                  option.serviceName
-                                )}
+                                value={option.id}
+                                checked={selectedOptions.includes(option.id)}
                                 onChange={handleOptionChange}
                               />
                               <span className="">
@@ -191,7 +191,7 @@ const CustomerPanel = () => {
                       </div>
                     )}
                   </div>
-                )}
+                }
               </div>
             ))
           ) : (

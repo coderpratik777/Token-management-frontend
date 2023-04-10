@@ -19,7 +19,7 @@ const AdminLogin = () => {
     var jsonData = JSON.stringify(userData);
 
     axios
-      .post("http://localhost:8080/adminlogin", jsonData, {
+      .post("http://localhost:8080/login/manager", jsonData, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -117,7 +117,7 @@ const AdminLogin = () => {
 
               <button
                 type="submit"
-                className="w-full text-white bg-slate-800 hover:bg-slate-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                className="w-full text-white bg-indigo-500 hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
               >
                 Sign in
               </button>

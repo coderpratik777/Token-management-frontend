@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { json, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const AddCounterExecutive = () => {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ const AddCounterExecutive = () => {
     } else {
       const jsonData = JSON.stringify(userData);
       axios
-        .post("http://localhost:8080/addcounterexecutive", jsonData, {
+        .post("http://localhost:8080/add/counterexecutive", jsonData, {
           headers: {
             "Content-type": "application/json",
           },
@@ -141,7 +141,7 @@ const AddCounterExecutive = () => {
 
               <button
                 type="submit"
-                className="w-full text-white bg-slate-800 hover:bg-slate-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                className="w-full text-white bg-indigo-500 hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
               >
                 Add Counter Executive
               </button>
