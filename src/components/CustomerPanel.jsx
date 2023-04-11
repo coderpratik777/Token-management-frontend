@@ -36,7 +36,7 @@ const CustomerPanel = (props) => {
     fetchedServices.map(async (eachService) => {
       return await axios
         .get(
-          `http://localhost:8080/get/subservices-of-service?sid=${eachService.id}`
+          `http://localhost:8080/get/subservices-of-service?sId=${eachService.id}`
         )
         .then(function (response) {
           setFetchedServiceDetails((prev) => {
@@ -59,15 +59,6 @@ const CustomerPanel = (props) => {
       console.log("Select at least 1 service");
     } else {
       console.log(selectedOptions);
-      // let queueLength;
-      // await axios
-      //   .get("http://localhost:8080/gettokenmap")
-      //   .then(function (response) {
-      //     queueLength = Object.keys(response.data).length;
-      //   })
-      //   .catch(function (error) {
-      //     console.log(error);
-      //   });
 
       await axios
         .post("http://localhost:8080/addtoken", {
@@ -155,7 +146,7 @@ const CustomerPanel = (props) => {
             fetchedServices.map((service) => (
               <div
                 key={service.id}
-                className="w-full md:w-5/12j lg:w-1/6 bg-gray-100 flex rounded flex-col shadow hover:shadow-lg h-max m-2"
+                className="w-full md:w-5/12 lg:w-1/6 bg-gray-100 flex rounded flex-col shadow hover:shadow-lg h-max m-2"
               >
                 <div className="flex items-center justify-between p-4">
                   {service.serviceName.replace(/([A-Z])/g, " $1")}

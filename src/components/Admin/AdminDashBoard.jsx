@@ -35,7 +35,7 @@ const AdminDashboard = () => {
             Manager of Apli bank
           </h1>
         </div>
-        <div className="flex flex-wrap  w-full px-8 lg:px-16">
+        <div className="flex flex-wrap w-full px-8 lg:px-16">
           <Link
             className="flex items-center flex-shrink flex-grow m-2 p-4 lg:p-8 md:space-x-4 bg-gray-100 rounded-lg hover:shadow-lg"
             to="/add/counter"

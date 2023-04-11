@@ -10,45 +10,49 @@ const AllCountersPanel = (props) => {
   const [serviceTypes, setServiceTypes] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    async function fetchData() {
-      //counter executive not allowed on this screen
-      if (localStorage.getItem("counterid")) {
-        navigate("/counter-executive");
-      }
-      // manager not allowed on this screen
-      if (localStorage.getItem("adminId")) {
-        navigate("/admin/dashboard");
-      }
+  const fetchData = async () => {
+    console.log("first");
 
-      if (JSON.parse(localStorage.getItem("UserToken"))) {
-        setUserTokens(JSON.parse(localStorage.getItem("UserToken")));
-      } else {
-        setUserTokens([]);
-      }
-      setProgress(50);
-
-      await axios
-        .get("http://localhost:8080/get/counters")
-        .then(function (response) {
-          setCounters(response.data);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-      setProgress(70);
-
-      await axios
-        .get("http://localhost:8080/get/allSubServices")
-        .then((response) => {
-          setServiceTypes(response.data);
-        });
-
-      setProgress(100);
+    if (JSON.parse(localStorage.getItem("UserToken"))) {
+      setUserTokens(JSON.parse(localStorage.getItem("UserToken")));
+    } else {
+      setUserTokens([]);
     }
-    setProgress(30);
-    fetchData();
-  }, [navigate, setProgress]);
+
+    await axios
+      .get("http://localhost:8080/get/counters")
+      .then(function (response) {
+        setCounters(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    await axios
+      .get("http://localhost:8080/get/allSubServices")
+      .then((response) => {
+        setServiceTypes(response.data);
+      });
+  };
+
+  // setInterval(fetchData(), 2000);
+
+  useEffect(() => {
+    //counter executive not allowed on this screen
+    if (localStorage.getItem("counterid")) {
+      navigate("/counter-executive");
+    }
+    // manager not allowed on this screen
+    if (localStorage.getItem("adminId")) {
+      navigate("/admin/dashboard");
+    }
+
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [navigate]);
 
   useEffect(() => {
     let temp = [];
