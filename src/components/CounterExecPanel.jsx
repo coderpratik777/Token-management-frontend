@@ -232,11 +232,10 @@ const CounterExecPanel = () => {
                     {activeToken.tokenId}
                   </td>
                   <td className="px-4 py-2 border-r-2 border-gray-300">
-                    {serviceTypes[activeToken.servicetypeId]
-                      ? serviceTypes[
-                          activeToken.servicetypeId - 1
-                        ].serviceName.replace(/([A-Z])/g, " $1")
-                      : activeToken.servicetypeId}
+                    {serviceTypes[activeToken.servicetypeId - 1].replace(
+                      /([A-Z])/g,
+                      " $1"
+                    )}
                   </td>
                   <td className="px-4 py-2 border-r-2 border-gray-300">
                     {activeToken.frequencyOfCalling}
@@ -277,11 +276,10 @@ const CounterExecPanel = () => {
                           {item.tokenId}
                         </td>
                         <td className="px-4 py-2 ">
-                          {serviceTypes[item.servicetypeId - 1]
-                            ? serviceTypes[
-                                item.servicetypeId - 1
-                              ].serviceName.replace(/([A-Z])/g, " $1")
-                            : item.servicetypeId}
+                          {serviceTypes[item.servicetypeId - 1].replace(
+                            /([A-Z])/g,
+                            " $1"
+                          )}
                         </td>
                       </tr>
                     )
@@ -315,11 +313,10 @@ const CounterExecPanel = () => {
                       {item.tokenId}
                     </td>
                     <td className="px-4 py-2 ">
-                      {serviceTypes[item.servicetypeId - 1]
-                        ? serviceTypes[
-                            item.servicetypeId - 1
-                          ].serviceName.replace(/([A-Z])/g, " $1")
-                        : item.servicetypeId}
+                      {serviceTypes[item.servicetypeId - 1].replace(
+                        /([A-Z])/g,
+                        " $1"
+                      )}
                     </td>
                   </tr>
                 ))}

@@ -11,15 +11,15 @@ const Navbar = () => {
     <div>
       <header className="text-gray-600 body-font shadow-lg">
         <div className="container flex p-4 flex-col md:flex-row items-center justify-between">
-          <div className="flex space-x-4 items-end">
+          <div className="flex flex-col md:flex-row w-full md:w-max justify-center items-center">
             <Link
               to="/"
               className="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0"
             >
-              <span className="ml-3 text-xl">Bank Token System</span>
+              <span className="text-xl">Bank Token System</span>
             </Link>
             {localStorage.getItem("adminId") && (
-              <Link to="/admin/dashboard">Admin Dashboard</Link>
+              <Link to="/admin/dashboard" className="md:ml-5 ">Admin Dashboard</Link>
             )}
           </div>
 

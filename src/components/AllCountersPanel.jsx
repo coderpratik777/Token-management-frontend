@@ -141,11 +141,10 @@ const AllCountersPanel = (props) => {
                     <span>
                       Service Type:{" "}
                       <span className="font-semibold">
-                        {serviceTypes[e.servicetypeId - 1] &&
-                          serviceTypes[e.servicetypeId - 1].serviceName.replace(
-                            /([A-Z])/g,
-                            " $1"
-                          )}
+                        {serviceTypes[e.servicetypeId - 1].replace(
+                          /([A-Z])/g,
+                          " $1"
+                        )}
                       </span>
                     </span>
                     <span>
