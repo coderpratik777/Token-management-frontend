@@ -76,16 +76,16 @@ const AllCountersPanel = (props) => {
               className="p-3 cursor-pointer lg:w-1/3 h-max"
               key={eachCounter.id}
             >
-              <div className="flex flex-col h-full space-y-3 p-6 overflow-hidden text-center bg-gray-100 bg-opacity-75 rounded-lg hover:shadow-lg">
+              <div className="flex flex-col h-full p-6 space-y-3 overflow-hidden text-center bg-gray-100 bg-opacity-75 rounded-lg hover:shadow-lg">
                 <h1 className="text-2xl font-medium text-gray-900 title-font sm:text-2xl">
                   <div>
                     {eachCounter.counterName.replace(/([A-Z])/g, " $1")}
                   </div>
                 </h1>
                 {eachCounter.isActive === 0 ? (
-                  <span className="text-red-500 text-lg">Inactive</span>
+                  <span className="text-lg text-red-500">Inactive</span>
                 ) : (
-                  <span className="text-green-500 text-lg">Active</span>
+                  <span className="text-lg text-green-500">Active</span>
                 )}
                 {eachCounter.isWorking === 0 ? (
                   <span className="text-red-500 text-md">No token Called.</span>
@@ -99,7 +99,7 @@ const AllCountersPanel = (props) => {
           );
         })}
       </div>
-      <div className="w-full md:w-1/4 p-3 tokendetails">
+      <div className="w-full p-3 md:w-1/4 tokendetails">
         <div className="p-5 bg-gray-100 rounded hover:shadow-lg">
           <span className="text-xl font-semibold">Your token Details</span>
           {userTokenData.length === 0 ? (
@@ -123,11 +123,11 @@ const AllCountersPanel = (props) => {
                     </span>
                     <span>
                       Generation Time:
-                      <span className="font-semibold"> {e.generationTime}</span>
+                      <span className="font-semibold"> {e.generationTime.slice(11,19)}</span>
                     </span>
                     <span>
                       Expected time:{" "}
-                      <span className="font-semibold">{e.expectedTime}</span>
+                      <span className="font-semibold">{e.expectedTime.slice(11,19)}</span>
                     </span>
                     <span>
                       Frequency of calling:
