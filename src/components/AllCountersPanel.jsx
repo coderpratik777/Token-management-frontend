@@ -11,14 +11,6 @@ const AllCountersPanel = (props) => {
   const navigate = useNavigate();
 
   const fetchData = async () => {
-    console.log("first");
-
-    if (JSON.parse(localStorage.getItem("UserToken"))) {
-      setUserTokens(JSON.parse(localStorage.getItem("UserToken")));
-    } else {
-      setUserTokens([]);
-    }
-
     await axios
       .get("http://localhost:8080/get/counters")
       .then(function (response) {
@@ -26,12 +18,6 @@ const AllCountersPanel = (props) => {
       })
       .catch(function (error) {
         console.log(error);
-      });
-
-    await axios
-      .get("http://localhost:8080/get/allSubServices")
-      .then((response) => {
-        setServiceTypes(response.data);
       });
   };
 
@@ -47,6 +33,16 @@ const AllCountersPanel = (props) => {
       navigate("/admin/dashboard");
     }
 
+    if (JSON.parse(localStorage.getItem("UserToken"))) {
+      setUserTokens(JSON.parse(localStorage.getItem("UserToken")));
+    } else {
+      setUserTokens([]);
+    }
+
+    axios.get("http://localhost:8080/get/allSubServices").then((response) => {
+      setServiceTypes(response.data);
+    });
+
     const intervalId = setInterval(() => {
       fetchData();
     }, 1000);
@@ -56,7 +52,6 @@ const AllCountersPanel = (props) => {
 
   useEffect(() => {
     let temp = [];
-    setProgress(50);
     userTokens.map(async (id) => {
       return await axios
         .get(`http://localhost:8080/get-token-info?id=${id}`)
@@ -69,7 +64,6 @@ const AllCountersPanel = (props) => {
           console.log(error);
         });
     });
-    setProgress(100);
     setUserTokenData(temp);
   }, [userTokens, setProgress]);
 
@@ -105,7 +99,7 @@ const AllCountersPanel = (props) => {
           );
         })}
       </div>
-      <div className="w-1/4 p-3 tokendetails">
+      <div className="w-full md:w-1/4 p-3 tokendetails">
         <div className="p-5 bg-gray-100 rounded hover:shadow-lg">
           <span className="text-xl font-semibold">Your token Details</span>
           {userTokenData.length === 0 ? (
@@ -145,10 +139,7 @@ const AllCountersPanel = (props) => {
                     <span>
                       Service Type:{" "}
                       <span className="font-semibold">
-                        {serviceTypes[e.servicetypeId - 1].replace(
-                          /([A-Z])/g,
-                          " $1"
-                        )}
+                        {serviceTypes[e.servicetypeId - 1]}
                       </span>
                     </span>
                     <span>

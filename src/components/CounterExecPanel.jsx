@@ -26,12 +26,6 @@ const CounterExecPanel = () => {
       });
 
     await axios
-      .get("http://localhost:8080/get/allSubServices")
-      .then((response) => {
-        setServiceTypes(response.data);
-      });
-
-    await axios
       .get(
         `http://localhost:8080/get-active-token-of-counter?counterId=${localStorage.getItem(
           "counterid"
@@ -65,7 +59,17 @@ const CounterExecPanel = () => {
       });
       navigate("/login/counter-executive");
     }
-    fetchData();
+
+    axios.get("http://localhost:8080/get/allSubServices").then((response) => {
+      setServiceTypes(response.data);
+    });
+
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+    
   }, [navigate]);
 
   const callNext = () => {

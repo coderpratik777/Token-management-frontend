@@ -17,6 +17,7 @@ import AddServices from "./components/Admin/AdminPanel/AddService";
 import AddCounterExecutive from "./components/Admin/AdminPanel/AddCounterExecutive";
 import LoadingBar from "react-top-loading-bar";
 import ModifyServices from "./components/Admin/AdminPanel/ModifyServices";
+import ViewStats from "./components/Admin/AdminPanel/ViewStats";
 
 function App() {
   const [progress, setProgress] = useState(0);
@@ -64,6 +65,10 @@ function App() {
           <Route
             path="/admin/modifyservices"
             element={<ModifyServices setProgress={setProgress} />}
+          />
+          <Route
+            path="/admin/viewstats"
+            element={<ViewStats setProgress={setProgress} />}
           />
           <Route
             path="/admin/dashboard"

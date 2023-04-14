@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { MdOutlineCountertops } from "react-icons/md";
-import { BsArrowRightShort, BsPersonWorkspace } from "react-icons/bs";
+import { BsArrowRightShort, BsPersonWorkspace,BsDatabaseFillAdd } from "react-icons/bs";
 import { IoIosOptions } from "react-icons/io";
+import { ImStatsDots } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -53,7 +54,7 @@ const AdminDashboard = () => {
             to="/add/service"
           >
             <div className="flex items-center justify-center w-8 h-8 text-white bg-indigo-500 rounded-full">
-              <IoIosOptions />
+              <BsDatabaseFillAdd />
             </div>
             <h2 className="ml-3 md:text-lg font-medium text-gray-900 ">
               Add Service
@@ -73,9 +74,9 @@ const AdminDashboard = () => {
             <BsArrowRightShort className="text-xl text-indigo-500 ml-3" />
           </Link>
         </div>
-        <div className="">
+        <div className="flex flex-col md:flex-row">
           <Link
-            className="flex items-center p-4 lg:p-8 md:space-x-4 bg-gray-100 rounded-lg hover:shadow-lg"
+            className="flex m-2 items-center p-4 lg:p-8 md:space-x-4 bg-gray-100 rounded-lg hover:shadow-lg"
             to="/admin/modifyservices"
           >
             <div className="flex items-center justify-center w-8 h-8 text-white bg-indigo-500 rounded-full">
@@ -83,6 +84,18 @@ const AdminDashboard = () => {
             </div>
             <h2 className="ml-3 md:text-lg font-medium text-gray-900 ">
               Modify Services
+            </h2>
+            <BsArrowRightShort className="text-xl text-indigo-500 ml-3" />
+          </Link>
+          <Link
+            className="flex m-2 items-center p-4 lg:p-8 md:space-x-4 bg-gray-100 rounded-lg hover:shadow-lg"
+            to="/admin/viewstats"
+          >
+            <div className="flex items-center justify-center w-8 h-8 text-white bg-indigo-500 rounded-full">
+              <ImStatsDots />
+            </div>
+            <h2 className="ml-3 md:text-lg font-medium text-gray-900 ">
+              View Stats
             </h2>
             <BsArrowRightShort className="text-xl text-indigo-500 ml-3" />
           </Link>
