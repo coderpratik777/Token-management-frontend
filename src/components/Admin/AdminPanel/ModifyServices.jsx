@@ -147,7 +147,7 @@ const ModifyServices = () => {
               })}
               {isVisible[i] && (
                 <form
-                  className="flex w-full justify-between items-center p-4 rounded"
+                  className="flex w-full items-center p-4 rounded"
                   onSubmit={(e) => {
                     e.preventDefault();
                     if (subService.trim() === "") {
@@ -205,7 +205,7 @@ const ModifyServices = () => {
                     name="name"
                     value={subService}
                     onChange={(e) => setSubService(e.target.value)}
-                    className="p-2 rounded-md flex-grow mr-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-md text-slate-900 placeholder-slate-400 ring-1 ring-slate-200"
+                    className="p-2 rounded-md w-6/12 flex-grow mr-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-md text-slate-900 placeholder-slate-400 ring-1 ring-slate-200"
                     placeholder="Sub service name"
                   />
                   <button
