@@ -26,11 +26,6 @@ ChartJS.register(
 
 export const options = {
   responsive: true,
-  plugins: {
-    legend: {
-      position: "top",
-    },
-  },
 };
 
 const ViewStats = () => {
@@ -93,15 +88,15 @@ const ViewStats = () => {
 
   return (
     <div className="p-5 flex md:flex-row flex-col md:space-x-4 space-y-4 md:space-y-0">
-      <div className="left w-full md:w-1/2">
+      <div className="left w-full md:w-1/2 flex flex-col items-center space-y-6">
         <div className="heading w-full text-3xl font-bold">Bank Stats</div>
-        <div className="space-y-3 h-72 py-7 flex flex-col items-center">
+        <div className="space-y-3 w-8/12">
           <div className="chartlabel w-full text-center text-lg font-medium">
             Number of tokens served Day wise.
           </div>
           <Line data={NumberOfTokendata} options={options} />
         </div>
-        <div className="space-y-3 h-72 py-7 flex flex-col items-center">
+        <div className="space-y-3 w-8/12">
           <div className="chartlabel w-full text-center text-lg font-medium">
             Average serve time Day wise.
           </div>
@@ -142,7 +137,7 @@ const ViewStats = () => {
                     </div>
                     <div>
                       <span className="font-medium">Avg Serve Time: </span>
-                      {Math.round(counter.averageServeTime)} minutes
+                      {counter.averageServeTime} minutes
                     </div>
                     <div>
                       <span className="font-medium">Tokens Abandoned: </span>
@@ -197,7 +192,7 @@ const ViewStats = () => {
                     </div>
                     <div>
                       <span className="font-medium">Avg Serve Time: </span>
-                      {Math.round(counter.averageServeTime)} minutes
+                      {counter.averageServeTime} minutes
                     </div>
                     <div>
                       <span className="font-medium">Tokens Abandoned: </span>
