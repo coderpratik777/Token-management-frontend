@@ -11,7 +11,7 @@ const CounterExecPanel = () => {
   const [activeToken, setActiveToken] = useState({});
   const navigate = useNavigate();
 
-  //fetch data for queue and pending queue
+  //fetch data for global,pending queue and active token
   const fetchData = async () => {
     await axios
       .get(`http://localhost:8080/get-global-queue`)
@@ -69,7 +69,6 @@ const CounterExecPanel = () => {
     }, 1000);
 
     return () => clearInterval(intervalId);
-    
   }, [navigate]);
 
   const callNext = () => {
@@ -180,7 +179,7 @@ const CounterExecPanel = () => {
   return (
     <section>
       <div className="w-full text-3xl font-semibold text-center py-9">
-        Counter Executive
+        Counter No. {localStorage.getItem("counterid")}
       </div>
       <div className="flex flex-wrap justify-center w-full">
         <div className="flex flex-col w-full px-4 py-8 m-2 space-y-6 bg-gray-100 rounded-lg h-max lg:w-1/3 hover:shadow">

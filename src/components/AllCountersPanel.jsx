@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const AllCountersPanel = (props) => {
   const { setProgress } = props;
@@ -20,8 +21,6 @@ const AllCountersPanel = (props) => {
         console.log(error);
       });
   };
-
-  // setInterval(fetchData(), 2000);
 
   useEffect(() => {
     //counter executive not allowed on this screen
@@ -67,6 +66,24 @@ const AllCountersPanel = (props) => {
     setUserTokenData(temp);
   }, [userTokens, setProgress]);
 
+  useEffect(() => {
+    counters.map((eachCounter) => {
+      if (userTokens.includes(eachCounter.isWorking)) {
+        toast.success("Your token called!!", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+      return 0;
+    });
+  }, [counters, userTokens]);
+
   return (
     <section className="flex flex-col w-full px-5 py-10 text-gray-600 body-font md:flex-row ">
       <div className="flex flex-wrap w-full md:w-3/4 h-max">
@@ -76,7 +93,7 @@ const AllCountersPanel = (props) => {
               className="p-3 cursor-pointer lg:w-1/3 h-max"
               key={eachCounter.id}
             >
-              <div className="flex flex-col h-full p-6 space-y-3 overflow-hidden text-center bg-gray-100 bg-opacity-75 rounded-lg hover:shadow-lg">
+              <div className="flex flex-col h-full p-6 space-y-3 overflow-hidden text-center bg-gray-200 bg-opacity-75 rounded-lg hover:shadow-lg">
                 <h1 className="text-2xl font-medium text-gray-900 title-font sm:text-2xl">
                   <div>
                     {eachCounter.counterName.replace(/([A-Z])/g, " $1")}
@@ -100,7 +117,7 @@ const AllCountersPanel = (props) => {
         })}
       </div>
       <div className="w-full p-3 md:w-1/4 tokendetails">
-        <div className="p-5 bg-gray-100 rounded hover:shadow-lg">
+        <div className="p-5 bg-gray-200 rounded hover:shadow-lg">
           <span className="text-xl font-semibold">Your token Details</span>
           {userTokenData.length === 0 ? (
             <div className="flex flex-col">
@@ -123,11 +140,16 @@ const AllCountersPanel = (props) => {
                     </span>
                     <span>
                       Generation Time:
-                      <span className="font-semibold"> {e.generationTime.slice(11,19)}</span>
+                      <span className="font-semibold">
+                        {" "}
+                        {e.generationTime.slice(11, 19)}
+                      </span>
                     </span>
                     <span>
                       Expected time:{" "}
-                      <span className="font-semibold">{e.expectedTime.slice(11,19)}</span>
+                      <span className="font-semibold">
+                        {e.expectedTime.slice(11, 19)}
+                      </span>
                     </span>
                     <span>
                       Frequency of calling:
